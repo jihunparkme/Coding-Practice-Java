@@ -49,8 +49,8 @@ public class BOJ18808 {
 		for (int r = 0; r < 4; r++) {
 			
 			// 붙일 수 있는 위치를 찾다가
-			for (int ntr = 0; ntr < N - nr; ntr++) {
-				for (int ntc = 0; ntc < M - nc; ntc++) {
+			for (int ntr = 0; ntr < N; ntr++) {
+				for (int ntc = 0; ntc < M; ntc++) {
 					// 노트북 크기을 벗어나면 pass
 					if(ntr + nr > N || ntc + nc > M) continue;
 					
