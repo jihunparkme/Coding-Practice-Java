@@ -3,7 +3,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.StringTokenizer;
 
-public class BOJ18808 {
+public class BOJ18808_v2 {
 	
 	static int N, M, K, R, C, res = 0, scale = 0, notebk[][], sticker[][];
 	static int bfr, bfc, nr, nc;
