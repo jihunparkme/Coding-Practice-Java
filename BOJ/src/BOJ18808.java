@@ -89,6 +89,7 @@ public class BOJ18808 {
 				}
 			}
 			// 붙일 자리가 없다면 
+			if(r == 3) continue;
 			rotate90(r);
 		}
 		
