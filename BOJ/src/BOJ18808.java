@@ -42,7 +42,6 @@ public class BOJ18808 {
 		
 		System.out.println(res);
 	}
-	
 	// 붙일 수 있는 위치 찾아서 붙이기(가장 위쪽, 가장 왼쪽)
 	public static void findLocate() {
 		// 0, 90, 180, 270도 회전해볼꺼야
