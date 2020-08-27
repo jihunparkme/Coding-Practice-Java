@@ -22,7 +22,7 @@ public class BOJ3109_v2 {
 		for (int i = 0; i < R; i++)
 			map[i] = br.readLine().toCharArray();
 
-		// 근처 빵집으로부터 가스관 연결을 시도해보자.
+		// 근처 빵집으로부터 가스관 연결을 시도해보자.(0행 ~ R-1행)
 		for (int i = 0; i < R; i++) {
 			visited[i][0] = true;
 			setPipe(i, 0);
@@ -32,8 +32,7 @@ public class BOJ3109_v2 {
 	}
 
 	// 가스관 연결
-	// 오른쪽위대각선, 오른쪽, 오른쪽아래대각선 순서로 연결 시도
-	//  -> 맨 위부터(그리디 알고리즘 적용)
+	// 오른쪽 위 대각선, 오른쪽, 오른쪽 아래 대각선 순서로 연결 시도
 	private static boolean setPipe(int r, int c) {
 		// 원웅이네 빵집까지 파이프가 연결되었다면
 		if(c == C-1) {

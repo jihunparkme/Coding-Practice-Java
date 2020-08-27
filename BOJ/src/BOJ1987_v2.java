@@ -26,7 +26,7 @@ public class BOJ1987_v2 {
 	}
 
 	private static void move(int r, int c, int alpa, int cnt) {
-		// 모든 알파벳을 다 모았을 경우 더이상 방문할 필요가 없음
+		// 모든 알파벳을 다 모았을 경우 최대 칸이므로 더이상 볼 필요가 없음
 		if (res == 26) return;
 		// 알파벳 줍줍
 		alpa |= (1 << map[r][c] - 'A');
