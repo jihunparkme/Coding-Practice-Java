@@ -53,15 +53,16 @@ public class BOJ7562 {
 		
 		while(!q.isEmpty()) {
 			State now = q.poll();
+			// 도착 지점에 도달하면
 			if(now.r == end.r && now.c == end.c)
 				return now.dist;
-			
+			// 나이트처럼 8방 탐색
 			for (int d = 0; d < 8; d++) {
 				int rr = now.r + dr[d];
 				int cc = now.c + dc[d];
-				// 범위를 벗어나면
+				// 범위를 벗어나면 pass
 				if(rr < 0 || cc < 0 || rr >= N || cc >= N) continue;
-				// 이미 방문한 적이 있다면
+				// 이미 방문한 적이 있다면 pass
 				if(visited[rr][cc]) continue;
 				
 				visited[rr][cc] = true;
