@@ -49,8 +49,8 @@ public class BOJ15961 {
 			
 			// 이전에 먹었던건 퉤퉤
 			ate[dishs[(start - K) % N]]--;
-			// 뱉었는데 먹은적이 없으면
-			if(ate[dishs[(start - K) % N]] == 0) cnt -= 1;
+			// 뱉었는데 먹은적이 없으면 
+			if(ate[dishs[(start - K) % N]] == 0) cnt--;
 			
 			// 다음에 위치한 초밥이 먹었던게 아니면 냠냠
 			if(ate[dishs[start % N]] == 0) {
@@ -68,5 +68,4 @@ public class BOJ15961 {
 			if(start == (N-1) + K) break;
 		}
 	}
-
 }
