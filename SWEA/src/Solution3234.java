@@ -41,17 +41,17 @@ public class Solution3234 {
       for (int i = 0; i < N; i++) {   
          // 이미 사용된 추일 경우 pass
          if(used[i]) continue;
-         // 고른 추를 체크
+         // 해당 추를 사용해보자.
          used[i] = true;
-         // 왼쪽에 해당 추를 사용
+         // 왼쪽 저울에 해당 추를 올려볼까
          balances(idx + 1, sumL + arr[i], sumR, used, arr, N);
          
-         // 오른쪽에 올라가 있는 무게의 총합이 왼쪽에 올라가 있는 무게의 총합보다 더 커지면 안됨
+         // 오른쪽에 올라가 있는 무게의 총합이 왼쪽에 올라가 있는 무게의 총합보다 더 크지 않다면
          if(sumR + arr[i] <= sumL) {
-            // 오른쪽에 해당 추를 사용
+        	// 오른쪽 저울에 해당 추를 올려볼까
             balances(idx + 1, sumL, sumR + arr[i], used, arr, N);
          }
-         // 고른 추 해제
+         // 사용한 추를 해제
          used[i] = false;
       }
    }
