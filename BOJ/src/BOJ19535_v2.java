@@ -4,11 +4,10 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
 
-public class BOJ19535 {
+public class BOJ19535_v2 {
 
-	static int N;
-	static long D, G;
-	static boolean[] checked;
+	static int N, D, G;
+	static boolean[] isStart;
 	static ArrayList<Integer>[] tree;
 	
 	public static void main(String[] args) throws IOException {
@@ -18,7 +17,7 @@ public class BOJ19535 {
 		
 		N = Integer.parseInt(br.readLine());
 		tree = new ArrayList[N+1];
-		checked = new boolean[N+1];
+		isStart = new boolean[N+1];
 		for (int i = 1; i <= N; i++) 
 			tree[i] = new ArrayList<>();
 			
@@ -34,29 +33,38 @@ public class BOJ19535 {
 		// ㅈ Tree 찾기
 		for (int i = 1; i <= N; i++) {
 			if(tree[i].size() >= 3) {
-				// nC3 = n!/3!(n-3)! = n(n-1)(n-2) / 3 * 2
-				long n = tree[i].size();
-				G += (n * (n-1) * (n-2)) / 6;
+				// nC3 = n! / 3!(n-3)! = n(n-1)(n-2) / 3 * 2
+				int n = tree[i].size();
+				G += (n * (n-1) * (n-2)) / (3 * 2);
 			}
 		}
 
 		// ㄷ Tree 찾기
-		for (int p = 1; p <= N; p++) {
-			long pChild = tree[p].size() - 1;
-			
-			for (int c = 0; c < tree[p].size(); c++) {
-				// 이미 확인한 노드일 경우
-				if(checked[tree[p].get(c)]) continue;
-				// (현재 노드의 간선 - 1) * (연결된 노드의 간선 - 1) 
-				D += pChild * (tree[tree[p].get(c)].size() - 1);
-			}
-			// check!
-			checked[p] = true;
+		for (int i = 1; i <= N; i++) {
+			// 시작점
+			isStart[i] = true;
+			findDTree(-1, i, 0);	
 		}
 
 		if(G * 3 < D) System.out.println("D");
 		else if(G * 3 > D) System.out.println("G");
 		else System.out.println("DUDUDUNGA");
 	}
+
+	private static void findDTree(int parent, int child, int cnt) {
+		
+		// ㄷ Tree가 만들어졌을 경우 count
+		if(cnt == 3) {
+			// 시작점이었던 노드가 마지막지점이라면 pass
+			if(!isStart[child]) D++;
+			return;
+		}
+		
+		for (int i = 0; i < tree[child].size(); i++) {
+			// 부모 노드일 경우 pass
+			if(tree[child].get(i) == parent) continue;
+			findDTree(child, tree[child].get(i), cnt + 1);
+		}
+	}	
 	
 }
