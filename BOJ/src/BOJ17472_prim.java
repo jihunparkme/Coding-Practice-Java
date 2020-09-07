@@ -70,6 +70,7 @@ public class BOJ17472_prim {
 			}
 		}
 		
+		// 프림 알고리즘 적용
 		System.out.println(connectLand(num));
 	}
 
@@ -103,6 +104,14 @@ public class BOJ17472_prim {
 		return -1;
 	}
 
+	/**
+	 * 해당 방향(d)으로 다리를 설치해보자.
+	 * 다리가 다른 섬에 도달하면 목적 섬까지의 다리 길이를 우선순위 큐에 넣기
+	 * @param r	행 좌표
+	 * @param c	열 좌표
+	 * @param d	방향
+	 * @param here	현재 섬 번호
+	 */
 	private static void setBridge(int r, int c, int d, int here) {
 		
 		int len = 0;
@@ -127,6 +136,12 @@ public class BOJ17472_prim {
 		}
 	}
 
+	/**
+	 * 연결된 각 섬에 고유한 번호 붙이기
+	 * @param r	행 좌표
+	 * @param c	열 좌표
+	 * @param num	섬 고유 번호
+	 */
 	private static void setLandName(int r, int c, int num) {
 		
 		// 4방 탐색
