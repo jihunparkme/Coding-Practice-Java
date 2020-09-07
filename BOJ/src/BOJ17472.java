@@ -67,7 +67,7 @@ public class BOJ17472 {
 			}
 		}
 		
-		
+		// 크루스칼 알고리즘 적용
 		System.out.println(connectLand(num));
 	}
 
@@ -85,8 +85,9 @@ public class BOJ17472 {
 		for (Edge edge : edgeList) {
 			// 싸이클 형성이 안된다면
 			if(union(edge.from, edge.to)) {
-				res += edge.dist;
 				// 섬을 모두 연결
+				res += edge.dist;
+				// (간선 개수)가 (노드 개수 - 1)개라면 종료
 				if(++cnt == (num - 2) - 1) return res;
 			}
 		}
@@ -107,6 +108,14 @@ public class BOJ17472 {
 		return parents[a] = find(parents[a]);
 	}
 
+	/**
+	 * 해당 방향(d)으로 다리를 설치해보자.
+	 * 다리가 다른 섬에 도달하면 목적 섬까지의 다리 길이를 우선순위 큐에 넣기
+	 * @param r	행 좌표
+	 * @param c	열 좌표
+	 * @param d	방향
+	 * @param here	현재 섬 번호
+	 */
 	private static void setBridge(int r, int c, int d, int here) {
 		
 		int len = 0;
@@ -116,13 +125,13 @@ public class BOJ17472 {
 			c += dc[d];
 			// 범위를 벗어나면 out
 			if(r < 0 || c < 0 || r >= R || c >= C) return;
-			// 같은 섬이면 out
+			// 같은 섬이에 도달하면 out
 			if(map[r][c] == here) return;
 			len++;
 			// 다른 섬을 만났는데 길이가 2 이상이라면
 			if(map[r][c] != here && map[r][c] >= 2) {
 				if(len - 1 >= 2) {
-					// 그 섬까지의 거리를 우선순위 큐에 넣기
+					// 그 섬까지의 다리 길이를 우선순위 큐에 넣기
 					edgeList.add(new Edge(here, map[r][c], len - 1));
 				}
 				return;
@@ -131,6 +140,12 @@ public class BOJ17472 {
 		}
 	}
 
+	/**
+	 * 연결된 각 섬에 고유한 번호 붙이기
+	 * @param r	행 좌표
+	 * @param c	열 좌표
+	 * @param num	섬 고유 번호
+	 */
 	private static void setLandName(int r, int c, int num) {
 		
 		// 4방 탐색

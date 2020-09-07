@@ -20,24 +20,30 @@ public class BOJ17136 {
 			st = new StringTokenizer(br.readLine());
 			for (int j = 0; j < N; j++) {
 				map[i][j] = Integer.parseInt(st.nextToken());
+				// 1이 적힌 칸
 				if (map[i][j] == 1) oneCnt++;
 			}
 		}
 
 		go(0, 0);
 
-		System.out.println(res == 987654321 ? (oneCnt == 0 ? 0 : -1) : res);
+		System.out.println(res == 987654321 ? -1 : res);
 	}
 
+	/**
+	 * 색종이를 붙일 수 있는 칸에 색종이를 붙여보자.
+	 * @param idx	2차원 배열 index
+	 * @param paperCnt	현재까지 사용한 색종이의 수
+	 */
 	private static void go(int idx, int paperCnt) {
-		// 구해진 값보다 색종이를 더 많이 사용했을 경우 return
+		// 색종이를 최소로 사용한 경우보다 많이 사용한 경우 return
 		if (res <= paperCnt) return;
 		// 모두 탐색이 끝났을 때
 		if (idx == N * N) {
 			// 모든 1을 못 덮었다면
 			if (oneCnt != 0) return;
 			// 모든 1을 덮었다면
-			// 색종이의 최소 개수 갱신
+			// 사용한 색종이의 최소 개수 갱신
 			res = Math.min(res, paperCnt);
 			return;
 		}
@@ -47,22 +53,20 @@ public class BOJ17136 {
 
 		// 색종이를 붙일수 있는 칸이면
 		if (map[r][c] == 1) {
-			// 1~5까지의 색종이를 붙여볼 것이다.
+			// 다섯 종류의 색종이를 붙여보자
 			for (int p = 5; p >= 1; p--) {
 				// 해당 크기 색종이를 모두 사용했으면 pass
-				if (paperState[p] == 0)
-					continue;
+				if (paperState[p] == 0) continue;
 				// 해당 크기 색종이로 붙일 수 있나 확인
 				if (check(r, c, p)) {
-
 					// 붙일 수 있다면 붙이고(oneCnt 감소)
 					setPaper(r, c, p, true);
 					paperState[p]--;
-
+					
 					// 다음 위치로
 					go(idx + 1, paperCnt + 1);
-
-					// 돌아오면 다시 스티꺼 떼어내기((oneCnt 증가)
+					
+					// 돌아오면 다시 스티꺼 떼어내기(oneCnt 증가)
 					setPaper(r, c, p, false);
 					paperState[p]++;
 				}
@@ -74,11 +78,18 @@ public class BOJ17136 {
 
 	}
 
+	/**
+	 * 실제 색종이를 붙이는 함수
+	 * @param r	행 좌표
+	 * @param c	열 좌표
+	 * @param p	색종이 크기
+	 * @param isPut	색종이를 붙일지, 떼어낼지
+	 */
 	private static void setPaper(int r, int c, int p, boolean isPut) {
 
 		for (int i = 0; i < p; i++) {
 			for (int j = 0; j < p; j++) {
-				// 스티커를 떼어낼 용도라면
+				// 스티커를 붙일 경우
 				if (isPut) {
 					// 색종이를 붙이고
 					map[r + i][c + j] = 0;
@@ -95,16 +106,20 @@ public class BOJ17136 {
 
 	}
 
+	/**
+	 * 해당 색종이로 현재 칸에 붙일 수 있는지 확인
+	 * @param r	행 좌표
+	 * @param c	열 좌표
+	 * @param p	색종이 크기
+	 */
 	private static boolean check(int r, int c, int p) {
 
 		for (int i = 0; i < p; i++) {
 			for (int j = 0; j < p; j++) {
 				// 범위를 벗어날 경우
-				if (r + i >= N || c + j >= N)
-					return false;
+				if (r + i >= N || c + j >= N) return false;
 				// 붙일 자리에 1이 없다면 붙일 수 없음
-				if (map[r + i][c + j] != 1)
-					return false;
+				if (map[r + i][c + j] != 1) return false;
 			}
 		}
 
