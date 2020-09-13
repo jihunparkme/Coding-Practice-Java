@@ -1,7 +1,6 @@
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.Arrays;
 import java.util.PriorityQueue;
 import java.util.StringTokenizer;
 
@@ -37,7 +36,7 @@ public class BOJ6087 {
 		W = Integer.parseInt(st.nextToken());
 		H = Integer.parseInt(st.nextToken());
 		map = new char[H][W];
-		// 시작 레이저 확인
+		// 시작 레이저 확인 여부
 		boolean isStart = false;
 		State start = null, end = null;
 		// 지도 정보 입력
@@ -48,7 +47,7 @@ public class BOJ6087 {
 				if(map[i][j] == 'C') {
 					// 시작점이 정해지지 않았다면
 					if(!isStart) {
-						start = new State(i, j, -1, 0);
+						start = new State(i, j, 0, 0);
 						isStart = true;
 					}
 					else end = new State(i, j, 0, 0);
@@ -62,19 +61,30 @@ public class BOJ6087 {
 	private static int go(State start, State end) {
 
 		PriorityQueue<State> pQ = new PriorityQueue<>();
-		int[][] visited = new int[H][W];
-		for (int i = 0; i < H; i++) {
-			Arrays.fill(visited[i], Integer.MAX_VALUE);
+		// 방향별 visit 확인
+		boolean[][][] visited = new boolean[4][H][W];
+
+		// 시작점으로부터 4방향을 pq에 먼저 넣어주자
+		for (int d = 0; d < 4; d++) {
+			int xx = start.x + dx[d];
+			int yy = start.y + dy[d];
+			// 범위를 벗어날 경우
+			if(xx < 0 || yy < 0 || xx >= H || yy >= W) continue;
+			// 벽일 경우
+			if(map[xx][yy] == '*') continue;
+			pQ.add(new State(xx, yy, d, 0));
 		}
-		// 시작점부터 출발
-		pQ.add(start);
-		visited[start.x][start.y] = 0;
 		
 		while(!pQ.isEmpty()) {
 			
 			State now = pQ.poll();
 			// 도착 지점에 도달
-			if(now.x == end.x && now.y == end.y) return now.cnt;
+			if(now.x == end.x && now.y == end.y) 
+				return now.cnt;
+			// 이미 방문한 지점이면 pass
+			if(visited[now.dir][now.x][now.y]) continue;
+			// 방문하지 않았던 곳이라면 visite 처리
+			visited[now.dir][now.x][now.y] = true;
 			
 			// 4방 탐색
 			for (int d = 0; d < 4; d++) {
@@ -84,25 +94,11 @@ public class BOJ6087 {
 				if(xx < 0 || yy < 0 || xx >= H || yy >= W) continue;
 				// 벽일 경우
 				if(map[xx][yy] == '*') continue;
-				// 이미 방문
-				if(visited[xx][yy] <= now.cnt) continue;
-				
-				// 시작점일 경우
-				if(now.dir == -1) {
-					pQ.add(new State(xx, yy, d, 0));
-					visited[xx][yy] = 0;
-					continue;
-				}
 				
 				// 지금 가고 있는 방향과 같은 방향일 경우
-				if(now.dir == d) {
-					pQ.add(new State(xx, yy, d, now.cnt));
-					visited[xx][yy] = now.cnt;
-				} else {
-					// 다른 방향일 경우(방향이 꺽일 때)
-					pQ.add(new State(xx, yy, d, now.cnt + 1));
-					visited[xx][yy] = now.cnt + 1;
-				}
+				if(now.dir == d) pQ.add(new State(xx, yy, d, now.cnt));
+				// 다른 방향일 경우(방향이 꺽일 때)
+				else pQ.add(new State(xx, yy, d, now.cnt + 1));
 			} 
 		}
 	
