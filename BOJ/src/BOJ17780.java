@@ -16,7 +16,7 @@ public class BOJ17780 {
 		N = Integer.parseInt(st.nextToken());	// 체스판 크기
 		K = Integer.parseInt(st.nextToken());	// 말의 개수
 		map = new int[N][N];
-		place = new int[5][N][N];	// 말 위치 정보 1층~4층
+		place = new int[5][N][N];	// 말 위치 정보 1k층~4층
 		piece = new int[K + 1][3];	// 말 정보, 행,열,방향
 		floor = new int[K + 1];	// 말이 몇 층에 있는지
 		// 체스판 정보 입력
