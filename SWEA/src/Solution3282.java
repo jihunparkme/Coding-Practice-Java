@@ -16,23 +16,25 @@ public class Solution3282 {
 
 			st = new StringTokenizer(br.readLine());
 			int N = Integer.parseInt(st.nextToken()); // 물건 개수
-			int K = Integer.parseInt(st.nextToken()); // 가방 부피
-			int[][] dp = new int[N + 1][K + 1];
-			ArrayList<Item> bag = new ArrayList<>();
+			int W = Integer.parseInt(st.nextToken()); // 가방 부피
+			int[][] dp = new int[N + 1][W + 1];
+			Item[] bag = new Item[N+1];
 
-			for (int i = 0; i < N; i++) {
+			for (int i = 1; i <= N; i++) {
 				st = new StringTokenizer(br.readLine());
-				int a = Integer.parseInt(st.nextToken());
-				int b = Integer.parseInt(st.nextToken());
 				
-				bag.add(new Item(a, b));
-			}
-			
-			for (int i = 0; i < dp.length; i++) {
-				
+				bag[i] = new Item(Integer.parseInt(st.nextToken()), Integer.parseInt(st.nextToken()));
 			}
 
-			System.out.println("#" + tc + " " + "dd");
+			for (int i = 1; i <= N; i++) {
+				for (int j = 1; j <= W; j++) {
+					// i번째 물건의 무게가 가방 부피보다 크다면
+					if(bag[i].weight > j) dp[i][j] = dp[i-1][j];
+					else dp[i][j] = Math.max(dp[i-1][j], dp[i-1][j-bag[i].weight] + bag[i].value);
+				}
+			}
+
+			System.out.println("#" + tc + " " + dp[N][W]);
 		}
 	}
 
