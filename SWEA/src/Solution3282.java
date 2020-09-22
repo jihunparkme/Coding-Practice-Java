@@ -1,7 +1,6 @@
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
 import java.util.StringTokenizer;
 
 public class Solution3282 {
@@ -22,11 +21,8 @@ public class Solution3282 {
 
 			for (int i = 1; i <= N; i++) {
 				st = new StringTokenizer(br.readLine());
-				
 				bag[i] = new Item(Integer.parseInt(st.nextToken()), Integer.parseInt(st.nextToken()));
-			}
-
-			for (int i = 1; i <= N; i++) {
+				
 				for (int j = 1; j <= W; j++) {
 					// i번째 물건의 무게가 가방 부피보다 크다면
 					if(bag[i].weight > j) dp[i][j] = dp[i-1][j];
