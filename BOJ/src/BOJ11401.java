@@ -9,7 +9,7 @@ public class BOJ11401 {
 	
 	public static void main(String[] args) throws IOException {
 		
-		// 미리 펙토리얼값을 구해놓자.
+		// 미리 팩토리얼값을 구해놓자.
 		long[] factorial = new long[4000001];
 		factorial[0] = 1;
 		factorial[1] = 1;
