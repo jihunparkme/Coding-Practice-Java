@@ -15,22 +15,25 @@ public class BOj14468 {
 		for (int d = 0; d < input.length(); d++) {
 			
 			int now = input.charAt(d) - 'A';
+			// 이미 확인한 소라면 pass
+			if(check[now]) continue;
+			
 			// 확인한 소 체크
 			check[now] = true;
-			// 소의 출입 확인
+			// 소의 출입 상태 확인
 			alpa = new int[26];
 			alpa[now]++;
 			
-			// 나가는 점이 나올 때까지 반복
+			// 해당 소가 나가는 점이 나올 때까지
 			for (int nd = d + 1; nd < input.length(); nd++) {
 				
 				int next = input.charAt(nd) - 'A';
 				// 등장하는 소 확인
 				alpa[next]++;
 
-				// 나가는 점이 나왔을 때, 아직 나오지 않은 소 확인
+				// 해당 소가 나가는 점이 나왔을 때, 
 				if(next == now) {
-					
+					// 아직 나오지 않은 소 확인
 					for (int i = 0; i < 26; i++) 
 						if(!check[i] && alpa[i] == 1) cnt++;
 					

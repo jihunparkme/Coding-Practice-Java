@@ -38,12 +38,15 @@ public class BOJ14469 {
 					Integer.parseInt(st.nextToken()));
 		}
 		
+		// 도착한 시간순으로 정렬
 		Arrays.sort(cows);
 		
+		// 첫 번째 소가 도착한 시간
 		int time = cows[0].arrive;
 		for (int i = 0; i < N; i++) {
-			if(time < cows[i].arrive)
-				time = cows[i].arrive;
+			// 바로 검문을 받을 수 있는데, 소가 늦게 도착할 경우
+			if(time < cows[i].arrive) time = cows[i].arrive;
+			
 			time += cows[i].check;
 		}
 		
