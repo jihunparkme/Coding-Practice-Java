@@ -12,7 +12,9 @@ public class Main {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		StringTokenizer st;
 		
-		int R = Integer.parseInt(br.readLine());
+		R = Integer.parseInt(br.readLine());
+		C = Integer.parseInt(br.readLine());
+		
 		
 	}
 	
