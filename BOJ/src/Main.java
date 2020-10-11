@@ -5,7 +5,7 @@ import java.util.StringTokenizer;
 
 public class Main {
 	
-	static int R, C;
+	static int R, C, map[][];
 	
 	public static void main(String[] args) throws IOException {
 
@@ -14,7 +14,7 @@ public class Main {
 		
 		R = Integer.parseInt(br.readLine());
 		C = Integer.parseInt(br.readLine());
-		
+		map = new int[R][C];
 		
 	}
 	
