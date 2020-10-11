@@ -16,6 +16,7 @@ public class Main {
 		C = Integer.parseInt(br.readLine());
 		map = new int[R][C];
 		
+		st = new StringTokenizer(br.readLine());
 	}
 	
 }
