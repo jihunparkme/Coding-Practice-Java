@@ -6,7 +6,7 @@ import java.util.PriorityQueue;
 import java.util.StringTokenizer;
 
 /*
- * Fail : 잘못도니 접근..
+ * Fail : .
  */
 
 public class BOJ20007_v2 {
@@ -99,7 +99,7 @@ public class BOJ20007_v2 {
 				Info tmp = adj[now.to].get(i);
 				// 이미 방문한 집이면 pass
 				if(visited[tmp.to]) continue;
-				if((now.totalDist % 2) + tmp.totalDist * 2 > X) continue;
+				if(now.totalDist + tmp.totalDist * 2 > X) continue;
 				
 				// 떡 돌리러 가자~
 				pq.add(new Info(tmp.to, now.totalDist + tmp.totalDist * 2, distInfo[now.to][tmp.to]));

@@ -2,27 +2,27 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.PriorityQueue;
 import java.util.StringTokenizer;
 
 public class BOJ20007 {
 
-	static int N, M, X, Y, cnt, distInfo[][];
-	static boolean[] visited;
-	static ArrayList<Info>[] adj;
-	static class Info implements Comparable<Info>{
-		int to, totalDist, dist;
+	static int N, M, X, Y, INF = Integer.MAX_VALUE;
+	static Edge totalDist[];
+	static ArrayList<Edge>[] adj;
+	static class Edge implements Comparable<Edge> {
+		int to, dist;
 		
-		public Info(int to, int totalDist, int dist) {
+		public Edge(int to, int dist) {
 			super();
 			this.to = to;
-			this.totalDist = totalDist;
 			this.dist = dist;
 		}
-		
+
 		@Override
-		public int compareTo(Info o) {
-			return Integer.compare(this.totalDist, o.totalDist);
+		public int compareTo(Edge o) {
+			return Integer.compare(this.dist, o.dist);
 		}
 		
 	}
@@ -36,11 +36,13 @@ public class BOJ20007 {
 		M = Integer.parseInt(st.nextToken()); // 도로 개수
 		X = Integer.parseInt(st.nextToken()); // 최대 갈 수 있는 거리
 		Y = Integer.parseInt(st.nextToken()); // 성현이 집
-		distInfo = new int[N][N];
-		visited = new boolean[N];
+		
+		totalDist = new Edge[N];		
 		adj = new ArrayList[N];
-		for (int i = 0; i < N; i++) 
+		for (int i = 0; i < N; i++) {
+			totalDist[i] = new Edge(i, 0);
 			adj[i] = new ArrayList<>();
+		}
 		
 		// 도로 정보 입력
 		for (int i = 0; i < M; i++) {
@@ -49,61 +51,66 @@ public class BOJ20007 {
 			int b = Integer.parseInt(st.nextToken());
 			int w = Integer.parseInt(st.nextToken());
 			
-			adj[a].add(new Info(b, w, 0));
-			adj[b].add(new Info(a, w, 0));
+			adj[a].add(new Edge(b, w));
+			adj[b].add(new Edge(a, w));
+		}
+		
+		System.out.println(process());
+	}
+
+	private static int process() {
+		
+		// 성현이 집으로부터 각 집까지의 최단 거리
+		dijkstra();
+		
+		// 최단 거리가 X보다 클 경우(방문할 수 없는 집)
+		for (int i = 0; i < N; i++) {
+			if(totalDist[i].to > X) return -1;
+		}
+		
+		Arrays.sort(totalDist);
+		// 가까운 집부터 방문
+		int day = 0;
+		int idx = -1;
+		int tmp = 0;
+		while(idx < N) {
+			if(++idx == Y) continue;
 			
-			distInfo[a][b] = w;
-			distInfo[b][a] = w;
+			if(tmp + totalDist[idx].dist > X) 
 		}
 		
-		System.out.println(go());
+		System.out.println(Arrays.toString(totalDist));
+				
+		return 0;
 	}
 
-	private static int go() {
+	private static void dijkstra() {
 		
-		int res = operate();
-		
-		if(res == -1) return -1;
-		else {
-			res %= X;
-			return res == 0 ? res : res + 1;
+		for (int i = 0; i < N; i++) {
+			totalDist[i].dist = INF;		
 		}
-	}
-
-	private static int operate() {
+		totalDist[Y] = new Edge(Y, 0);
 		
 		// 성현이 집에서부터 출발
-		PriorityQueue<Info> pq = new PriorityQueue<>();
-		pq.add(new Info(Y, 0, 0));
-		int walk = 0;
+		boolean[] visited = new boolean[N];
+		PriorityQueue<Edge> pq = new PriorityQueue<>();
+		pq.add(new Edge(Y, 0));
 		
-		// 가장 가까운 집부터 방문
 		while(!pq.isEmpty()) {
 			
-			Info now = pq.poll();
+			Edge now = pq.poll();
 			// 이미 방문한 집이면 pass
 			if(visited[now.to]) continue;
-			// 방문 완료!
-			visited[now.to] = true;
-			walk += now.dist * 2;
-			// 모든 집을 다 돌았다면
-			if(++cnt == N) {
-				return walk;
+		
+			for (Edge next : adj[now.to]) {
+				if(!visited[next.to] && totalDist[next.to].dist > totalDist[now.to].dist + next.dist) {
+					totalDist[next.to].dist = totalDist[now.to].dist + next.dist;
+					pq.add(new Edge(next.to, totalDist[next.to].dist));
+				}
 			}
 			
-			for (int i = 0; i < adj[now.to].size(); i++) {
-				Info tmp = adj[now.to].get(i);
-				// 이미 방문한 집이면 pass
-				if(visited[tmp.to]) continue;
-				if((now.totalDist % 2) + tmp.totalDist * 2 > X) continue;
-				
-				// 떡 돌리러 가자~
-				pq.add(new Info(tmp.to, now.totalDist + tmp.totalDist * 2, distInfo[now.to][tmp.to]));
-			}
+			visited[now.to] = true;
 		}
-		
-		if(walk == 0 || cnt < N) return -1;
-		else return walk;
 		
 	}
 
