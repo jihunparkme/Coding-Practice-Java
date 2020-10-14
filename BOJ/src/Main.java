@@ -17,6 +17,9 @@ public class Main {
 		map = new int[R][C];
 		
 		st = new StringTokenizer(br.readLine());
+		for (int i = 0; i < args.length; i++) {
+			
+		}
 		
 	}
 	
