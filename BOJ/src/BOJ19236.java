@@ -103,45 +103,47 @@ public class BOJ19236 {
 				}
 				
 				// 빈 칸 or 다른 물고기가 있는 칸이라면 이동하고 위치를 바꿔주자
-				// 다음 위치의 물고기 정보 저장
+				// 이동할 위치의 물고기 정보 저장
 				Fish ftmp = tmpFishes[tmpMap[xx][yy]]; 
 				if(ftmp == null) { // 이동할 위치에 물고기가 없다면
 					// 내 위치만 갱신
 					tmpFishes[f] = new Fish(xx, yy, now.dir);
 				}
 				else { // 이동할 위치에 물고기가 있다면
+					// 내 위치와 이동할 위치의 정보를 교환
 					tmpFishes[tmpMap[xx][yy]] = new Fish(now.x, now.y, ftmp.dir);
 					tmpFishes[f] = new Fish(xx, yy, now.dir);
 				}
 				
+				// 물고기 정보도 교환
 				int ntmp = tmpMap[xx][yy];
 				tmpMap[xx][yy] = f;
 				tmpMap[now.x][now.y] = ntmp;
 				
 				break;
 				
-			} while (now.dir != origDir);
-			
-			// 이동할 수 있는 칸이 없으면 이동을 하지 않는다
-		}
+			} while (now.dir != origDir); // 처음 방향으로 돌아올 때까지
+		}// 이동할 수 있는 칸이 없으면 이동을 하지 않는다
 		
-		// 상어가 이동
+		/*
+		 * 상어가 이동
+		 */
 		// 이동할 수 있을 때까지 다 이동해보자(최대 3칸)
 		for (int d = 1; d <= 3; d++) {
 			int xx = tmpShark.x + dx[tmpShark.dir] * d;
 			int yy = tmpShark.y + dy[tmpShark.dir] * d;
 			
-			// 범위 넘어가면
+			// 범위 넘어가면 pass
 			if(xx < 0 || xx >= N || yy < 0 || yy >= N) break;
-			// 물고기가 없는 칸일 경우
+			// 물고기가 없는 칸일 경우 pass
 			if(tmpMap[xx][yy] == 0) continue;
 			
 			// 상어가 물고기가 있는 칸으로 이동했다면
 			// 그 칸에 있는 물고기를 먹고, 그 물고기의 방향을 가지게 된다.
-			int eatNum = tmpMap[xx][yy];
-			Fish fish = tmpFishes[tmpMap[xx][yy]];
+			int eatNum = tmpMap[xx][yy]; // 이동할 위치의 물고기 번호
+			Fish fish = tmpFishes[tmpMap[xx][yy]]; // 이동할 위치의 물고기 정보
 			
-			// 물고기 정보에서 삭제
+			// 먹힌 물고기 정보에서 삭제
 			tmpFishes[tmpMap[xx][yy]] = null;
 			// 상어 정보 갱신
 			tmpShark = new Fish(fish.x, fish.y, fish.dir);
@@ -150,20 +152,25 @@ public class BOJ19236 {
 			// 원래 상어가 있던 위치는 비우자
 			tmpMap[shark.x][shark.y] = 0;
 			
+			// 수정된 tmp 데이터를 전송(원본 데이터는 보존)
 			process(tmpMap, tmpShark, tmpFishes, sum + eatNum);
 			
-			// 백트래킹
+			/*
+			 * 백트래킹
+			 */
 	
+			// 초기 상어 위치로 되돌리기
 			tmpMap[shark.x][shark.y] = -1;
+			// 먹힌 물고기를 되돌리기
 			tmpMap[xx][yy] = eatNum;
+			// 초기 상어 정보 되돌리기
 			tmpShark = new Fish(shark.x, shark.y, shark.dir);
+			// 먹힌 물고기 정보 되돌리기
 			tmpFishes[tmpMap[xx][yy]] = new Fish(fish.x, fish.y, fish.dir);
-		}
+		} // 상어가 이동할 수 있는 칸이 없으면 공간에서 벗어나 집으로 간다.
 		
-		// 상어가 이동할 수 있는 칸이 없으면 공간에서 벗어나 집으로 간다.
 		// 결과 갱신
 		res = Math.max(res, sum);
-		
 	}
 
 }
