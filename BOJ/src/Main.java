@@ -1,6 +1,9 @@
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.StringTokenizer;
 
 public class Main {
@@ -16,11 +19,8 @@ public class Main {
 		C = Integer.parseInt(br.readLine());
 		map = new int[R][C];
 		
-		st = new StringTokenizer(br.readLine());
-		for (int i = 0; i < args.length; i++) {
-			
-		}
-		
+
+
 	}
 	
 }
