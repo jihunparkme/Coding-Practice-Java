@@ -24,8 +24,8 @@ public class BOJ20040 {
 			st = new StringTokenizer(br.readLine());
 			int a = Integer.parseInt(st.nextToken());
 			int b = Integer.parseInt(st.nextToken());
-			
-			if(process(a, b)) {
+			// 사이클이 형성되는지 확인
+			if(!union(a, b)) {
 				res = i;
 				break;
 			}
@@ -34,19 +34,10 @@ public class BOJ20040 {
 		System.out.println(res);
 	}
 
-	private static boolean process(int a, int b) {
-		
-		// union을 시도했지만 사이클이 형성되면
-		if(!union(a, b))
-			return true;
-		
-		return false;
-	}
-
 	private static boolean union(int a, int b) {
-		int aRoot = find(a);
-		int bRoot = find(b);
-		
+		int aRoot = find(a); // a의 root 노드
+		int bRoot = find(b); // b의 root 노드
+		// a와 b의 root 노드가 같다면 사이클 형성
 		if(aRoot == bRoot) return false;
 		parents[bRoot] = aRoot;
 		return true;
