@@ -18,7 +18,9 @@ public class Main {
 		R = Integer.parseInt(br.readLine());
 		C = Integer.parseInt(br.readLine());
 		map = new int[R][C];
-		
+		for (int i = 0; i < args.length; i++) {
+			
+		}
 
 
 	}
