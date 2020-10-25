@@ -16,10 +16,10 @@ public class BOJ1976 {
 		M = Integer.parseInt(br.readLine());
 		plan = new int[M];
 		parents = new int[N];
+		// Set
 		for (int i = 0; i < N; i++) {
 			parents[i] = i;
 		}
-		
 		// 도시 정보
 		for (int i = 0; i < N; i++) {
 			st = new StringTokenizer(br.readLine());
@@ -38,6 +38,7 @@ public class BOJ1976 {
 		
 		boolean isSuccess = true;
 		for (int i = 0; i < M - 1; i++) {
+			// 두 도시가 연결되어있지 않다면
 			if(find(plan[i]) != find(plan[i + 1])) {
 				isSuccess = false;
 				break;
@@ -54,8 +55,7 @@ public class BOJ1976 {
 		int bRoot = find(b);
 		
 		if(aRoot == bRoot) return false;
-		else if(aRoot < bRoot) parents[bRoot] = aRoot;
-		else parents[aRoot] = bRoot;
+		parents[bRoot] = aRoot;
 		
 		return true;
 		
@@ -67,5 +67,3 @@ public class BOJ1976 {
 	}
 	
 }
-// root 를 비교
-// head 를 연결
