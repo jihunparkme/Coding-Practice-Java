@@ -8,7 +8,6 @@ import java.util.StringTokenizer;
 public class BOJ2493 {
 
 	static int N, res[];
-	static Stack<Tower> towers;
 	static class Tower {
 		int num, height;
 
@@ -26,48 +25,34 @@ public class BOJ2493 {
 		
 		N = Integer.parseInt(br.readLine());
 		res = new int[N + 1];
-		towers = new Stack<>();
+		Stack<Tower> towers = new Stack<>();
 		st = new StringTokenizer(br.readLine());
 		for (int i = 1; i <= N; i++) {
-			towers.add(new Tower(i, Integer.parseInt(st.nextToken())));
+			
+			int h = Integer.parseInt(st.nextToken());
+			
+			while(!towers.isEmpty()) {
+				// 지금 타워가 더 높다면 pop
+				if(towers.peek().height < h) {
+					towers.pop();
+				} 
+				// 지금 타워가 더 낮다면 앞 타워 번호를 저장
+				else {
+					res[i] = towers.peek().num;
+					break;
+				}
+			}
+			
+			// 수신을 받을 타워가 없다면
+			if(towers.isEmpty()) {
+				res[i] = 0;
+			}
+			
+			towers.add(new Tower(i, h));
 		}
-		
-		process();
 		
 		for (int i = 1; i <= N; i++) {
 			System.out.print(res[i] + " ");
-		}
-	}
-
-	private static void process() {
-		
-		// 수신 타워를 찾지 못한 타워
-		ArrayList<Tower> rest = new ArrayList<>();
-		
-		while(towers.size() != 1) {
-			
-			// 현재 타워 높이
-			Tower now = towers.pop();
-			
-			// 왼쪽 타워에 신호를 보낼 수 있다면
-			if(towers.peek().height > now.height) {
-				// 신호가 닿은 왼쪽 타워의 번호를 저장
-				res[now.num] = towers.peek().num;
-				// 수신 타워를 찾지 못한 타워들도 확인
-				if(!rest.isEmpty()) {
-					for (int i = rest.size() - 1; i >= 0; i--) {
-						Tower t = rest.get(i);
-						if(towers.peek().height > t.height) {
-							res[t.num] = towers.peek().num;
-							rest.remove(i);
-						}
-					}
-				}
-			} 
-			// 닿을 수 없다면
-			else {
-				rest.add(now);
-			}
 		}
 	}
 
