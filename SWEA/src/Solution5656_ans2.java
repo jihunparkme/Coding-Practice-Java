@@ -6,7 +6,7 @@ import java.util.StringTokenizer;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.LinkedBlockingDeque;
 
-public class Solution5656_ans {
+public class Solution5656_ans2 {
 
 	static int N, W, H, res;
 	private static int[] dr = { -1, 1, 0, 0 }, dc = { 0, 0, -1, 1 };
@@ -114,10 +114,12 @@ public class Solution5656_ans {
 	private static void boom(int[][] map, int r, int c) {
 		
 		Queue<Point> q = new LinkedBlockingDeque<>();
-		q.add(new Point(r, c, map[r][c]));				
+		// 크기가 1보다 클 경우만 queue에 추가
+		if(map[r][c] > 1) q.add(new Point(r, c, map[r][c]));			
 		map[r][c] = 0; // 벽돌 제거 처리(방문처리)
 		
 		while(!q.isEmpty()) {
+			
 			Point now = q.poll();
 			
 			if(now.cnt == 1) continue;
@@ -130,7 +132,7 @@ public class Solution5656_ans {
 					nc += dc[d];
 					
 					if(nr >= 0 && nr < H && nc >= 0 && nc < W && map[nr][nc] != 0) {
-						q.add(new Point(nr, nc, map[nr][nc]));
+						if(map[nr][nc] > 1) q.add(new Point(nr, nc, map[nr][nc]));
 						map[nr][nc] = 0;
 					}
 				}
