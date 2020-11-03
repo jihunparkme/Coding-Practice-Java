@@ -1,12 +1,10 @@
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.Queue;
+import java.util.ArrayList;
 import java.util.StringTokenizer;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.LinkedBlockingDeque;
 
-public class Solution5656_ans2 {
+public class Solution5656_ans_dfs {
 
 	static int N, W, H, res;
 	private static int[] dr = { -1, 1, 0, 0 }, dc = { 0, 0, -1, 1 };
@@ -34,16 +32,19 @@ public class Solution5656_ans2 {
 			W = Integer.parseInt(st.nextToken());
 			H = Integer.parseInt(st.nextToken());
 			
+			int total = 0; // 총 벽돌의 개수
 			int[][] map = new int[H][W];
 			for (int r = 0; r < H; r++) {
 				st = new StringTokenizer(br.readLine());
+				
 				for (int c = 0; c < W; c++) {
 					map[r][c] = Integer.parseInt(st.nextToken());
+					if(map[r][c] > 0) total++; // 벽돌이면 count
 				}
 			}
 
 			res = Integer.MAX_VALUE;
-			go(0, map);
+			go(0, total, map);
 			
 			System.out.println("#" + tc + " " + res);
 		}
@@ -53,21 +54,21 @@ public class Solution5656_ans2 {
 	/**
 	 * i번째 구슬을 떨어뜨리기
 	 * 
-	 * @param cnt 던져진 구슬의 개수
+	 * @param count 던져진 구슬의 개수
 	 * @param map 이전 구슬까지의 2차원 배열
 	 */
-	private static boolean go(int cnt, int[][] map) {
+	static int bCnt;
+	private static boolean go(int count, int remainCount, int[][] map) {
 
-		int result = getRemain(map);
-		if(result == 0) {
+		if(remainCount == 0) {
 			res = 0;
 			return true;
 		}
 		
 		// 구슬을 모두 던졌을 경우
-		if(cnt == N) {
+		if(count == N) {
 			// 남아있는 벽돌의 개수를 구하여 최솟값 갱신	
-			res = Math.min(res, result);
+			res = Math.min(res, remainCount);
 			return false;
 		}
 		
@@ -86,63 +87,57 @@ public class Solution5656_ans2 {
 			// 이전 구슬 상태로 배열에 복사하여 초기화
 			copy(map, newMap);
 			// 벽돌 터뜨리기
-			boom(newMap, r, c);
+			bCnt = 0;
+			boom(newMap, r, c, newMap[r][c]);
 			// 벽돌 내리기
 			down(newMap);
 			// 다음 구슬 처리
-			if(go(cnt + 1, newMap)) return true;
+			if(go(count + 1, remainCount - bCnt, newMap)) return true;
 		}
 		
 		return false;
 	}
 
+	static ArrayList<Integer> list = new ArrayList<>();
 	private static void down(int[][] map) {
 		
 		for (int c = 0; c < W; c++) {
-			int r = H - 1;
-			while(r > 0) {
-				// 빈 공간이라면
-				if(map[r][c] == 0) {
-					// 직전행부터 출발
-					int nr = r - 1;
-					// 처음 만나는 벽돌
-					while(nr > 0 && map[nr][c] == 0) --nr;
-					
-					map[r][c] = map[nr][c];
-					map[nr][c] = 0;
+			
+			int r;
+			for (r = H - 1; r >= 0; r--) {
+				// 벽돌이라면 list에 추가 후 빈 공간으로
+				if(map[r][c] > 0) {
+					list.add(map[r][c]);
+					map[r][c] = 0;
 				}
-				--r;
 			}
+			r = H;
+			for (int b : list) {
+				map[--r][c] = b;
+			}
+			list.clear();
 		}
 		
 	}
 
-	private static void boom(int[][] map, int r, int c) {
+	private static void boom(int[][] map, int r, int c, int cnt) {
 		
-		Queue<Point> q = new LinkedBlockingDeque<>();
-		// 크기가 1보다 클 경우만 queue에 추가
-		if(map[r][c] > 1) q.add(new Point(r, c, map[r][c]));			
-		map[r][c] = 0; // 벽돌 제거 처리(방문처리)
+		bCnt++;
+		map[r][c] = 0;
+		if(cnt == 1) return;
 		
-		while(!q.isEmpty()) {
-			
-			Point now = q.poll();
-			
-			if(now.cnt == 1) continue;
-			
-			for (int d = 0; d < 4; d++) {
-				int nr = now.r, nc = now.c;
+		for (int d = 0; d < 4; d++) {
+			int nr = r;
+			int nc = c;
+			for (int k = 1; k < cnt; k++) {
+				nr += dr[d];
+				nc += dc[d];
 				
-				for (int k = 1; k < now.cnt; k++) {
-					nr += dr[d];
-					nc += dc[d];
-					
-					if(nr >= 0 && nr < H && nc >= 0 && nc < W && map[nr][nc] != 0) {
-						if(map[nr][nc] > 1) q.add(new Point(nr, nc, map[nr][nc]));
-						map[nr][nc] = 0;
-					}
+				if(nr >= 0 && nr < H && nc >= 0 && nc < W && map[nr][nc] != 0) {
+					boom(map, nr, nc, map[nr][nc]);
 				}
 			}
+			
 		}
 	}
 
@@ -155,18 +150,5 @@ public class Solution5656_ans2 {
 		}
 		
 	}
-
-	private static int getRemain(int[][] map) {
-		
-		int cnt = 0;
-		
-		for (int i = 0; i < H; i++) {
-			for (int j = 0; j < W; j++) {
-				if(map[i][j] > 0) cnt++;
-			}
-		}
-		
-		return cnt;
-	}
-
+	
 }

@@ -1,12 +1,13 @@
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.Queue;
 import java.util.StringTokenizer;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.LinkedBlockingDeque;
 
-public class Solution5656_ans2 {
+public class Solution5656_ans3 {
 
 	static int N, W, H, res;
 	private static int[] dr = { -1, 1, 0, 0 }, dc = { 0, 0, -1, 1 };
@@ -95,24 +96,25 @@ public class Solution5656_ans2 {
 		
 		return false;
 	}
-
+	
+	static ArrayList<Integer> list = new ArrayList<>();
 	private static void down(int[][] map) {
 		
 		for (int c = 0; c < W; c++) {
-			int r = H - 1;
-			while(r > 0) {
-				// 빈 공간이라면
-				if(map[r][c] == 0) {
-					// 직전행부터 출발
-					int nr = r - 1;
-					// 처음 만나는 벽돌
-					while(nr > 0 && map[nr][c] == 0) --nr;
-					
-					map[r][c] = map[nr][c];
-					map[nr][c] = 0;
+			
+			int r;
+			for (r = H - 1; r >= 0; r--) {
+				// 벽돌이라면 list에 추가 후 빈 공간으로
+				if(map[r][c] > 0) {
+					list.add(map[r][c]);
+					map[r][c] = 0;
 				}
-				--r;
 			}
+			r = H;
+			for (int b : list) {
+				map[--r][c] = b;
+			}
+			list.clear();
 		}
 		
 	}

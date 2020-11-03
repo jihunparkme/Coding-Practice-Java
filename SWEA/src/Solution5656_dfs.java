@@ -5,9 +5,9 @@ import java.util.LinkedList;
 import java.util.Queue;
 import java.util.StringTokenizer;
 
-public class Solution5656 {
+public class Solution5656_dfs {
 
-	static int N, W, H, res;
+	static int N, W, H, res, burstCnt;
 	static int[] dr = {-1, 1, 0, 0}, dc = {0, 0, -1, 1};
 	static class State {
 		int r, c, cnt;
@@ -81,7 +81,8 @@ public class Solution5656 {
 			// 이전 구슬의 상태를 복사
 			copy(map, newMap);
 			// 해당 좌표로 구슬을 떨어뜨려서 벽돌 터뜨리기
-			int burstCnt = burst(newMap, r, c);
+			burstCnt = 0;
+			burst(newMap, r, c, newMap[r][c]);
 			// 벽돌 내리기
 			down(newMap); 
 			// 다음 구슬 처리 (더이상 확인할 필요가 없다면 true)
@@ -114,38 +115,28 @@ public class Solution5656 {
 		
 	}
 
-	private static int burst(int[][] map, int r, int c) {
-		
-		int cnt = 0;
-		Queue<State> q = new LinkedList<>();
-		// 벽돌의 숫자가 1보다 크면 queue에 추가
-		if(map[r][c] > 1) q.add(new State(r, c, map[r][c]));
+	private static void burst(int[][] map, int r, int c, int cnt) {
+
 		// 벽돌이 깨지면 0
 		map[r][c] = 0;
-		cnt++;
-		
-		while(!q.isEmpty()) {
-			
-			State now = q.poll();
+		burstCnt++;
+		// 벽돌의 숫자가 1이면 return
+		if(cnt == 1) return;
 						
-			for (int d = 0; d < 4; d++) {
-				int rr = now.r;
-				int cc = now.c;
-				// (벽돌에 적힌 숫자 - 1) 만큼 영향
-				for (int k = 0; k < now.cnt - 1; k++) {
-					rr += dr[d];
-					cc += dc[d];
-					// 범위 확인
-					if(rr < 0 || rr >= H || cc < 0 || cc >= W || map[rr][cc] == 0) continue;
-					if(map[rr][cc] > 1) q.add(new State(rr, cc, map[rr][cc]));
-					
-					map[rr][cc] = 0;
-					cnt++;
-				}
+		for (int d = 0; d < 4; d++) {
+			int rr = r;
+			int cc = c;
+			
+			// (벽돌에 적힌 숫자 - 1) 만큼 영향
+			for (int k = 0; k < cnt - 1; k++) {
+				rr += dr[d];
+				cc += dc[d];
+				// 범위 확인
+				if(rr < 0 || rr >= H || cc < 0 || cc >= W || map[rr][cc] == 0) continue;
+				burst(map, rr, cc, map[rr][cc]);
 			}
 		}
 		
-		return cnt;
 	}
 
 	private static void copy(int[][] map, int[][] newMap) {
