@@ -1,8 +1,6 @@
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.LinkedList;
-import java.util.Queue;
 import java.util.StringTokenizer;
 
 public class Solution5643_dfs {
@@ -28,18 +26,19 @@ public class Solution5643_dfs {
 				
 				i = Integer.parseInt(st.nextToken());
 				j = Integer.parseInt(st.nextToken());
-				
+				// 단방향 그래프
 				adj[i][j] = 1;
 			}
 
 			int res = 0;
 			for (int k = 1; k <= N; k++) {
-				
+				// 자신보다 작은 친구와 큰 친구의 수
 				gtCnt = ltCnt = 0;
-				
+				// 자신보다 큰 친구를 찾으러
 				gtDFS(k, new boolean[N + 1]);
+				// 자신보다 작은 친구를 찾으러
 				ltDFS(k, new boolean[N + 1]);
-				
+				// 자신보다 작은 친구와 큰 친구의 합이 N - 1 이라면 자신이 몇 번째인지 알 수 있음				
 				if(gtCnt + ltCnt == N - 1) res++;
 			}
 			
@@ -57,7 +56,7 @@ public class Solution5643_dfs {
 		visited[n] = true;
 		
 		for (int i = 1; i <= N; i++) {
-			// 나보다 크고 확인하지 않은 치구
+			// 나보다 키가 크고 아지 확인하지 않은 친구 
 			if(adj[n][i] == 1 && !visited[i]) {
 				gtCnt++;
 				gtDFS(i, visited);
@@ -76,7 +75,7 @@ public class Solution5643_dfs {
 		visited[n] = true;
 		
 		for (int i = 1; i <= N; i++) {
-			// 나보다 작고 확인하지 않은 친구
+			// 나보다 키가 작고 아지 확인하지 않은 친구 
 			if(adj[i][n] == 1 && !visited[i]) {
 				ltCnt++;
 				ltDFS(i, visited);
