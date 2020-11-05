@@ -5,7 +5,7 @@ import java.util.LinkedList;
 import java.util.Queue;
 import java.util.StringTokenizer;
 
-public class Solution5643_bfs {
+public class Solution5643_dfs2 {
 
 	static int N, M, adj[][];
 	static int gtCnt, ltCnt;
@@ -24,7 +24,7 @@ public class Solution5643_bfs {
 			adj = new int[N + 1][N + 1];
 			int i, j;
 			for (int m = 1; m <= M; m++) {
-				st = new StringTokenizer(br.readLine());
+				st = new StringTokenizer(br.readLine(), " ");
 				
 				i = Integer.parseInt(st.nextToken());
 				j = Integer.parseInt(st.nextToken());
@@ -37,8 +37,8 @@ public class Solution5643_bfs {
 				
 				gtCnt = ltCnt = 0;
 				
-				gtBFS(k);
-				ltBFS(k);
+				gtDFS(k, new boolean[N + 1]);
+				ltDFS(k, new boolean[N + 1]);
 				
 				if(gtCnt + ltCnt == N - 1) res++;
 			}
@@ -47,46 +47,39 @@ public class Solution5643_bfs {
 		}
 
 	}
+	/**
+	 * 자신보다 큰 학생을 따라 탐색
+	 * @param n 현재 기준이 되는 학생번호
+	 * @param visited 현재까지 확인한 친구 체크
+	 */
+	private static void gtDFS(int n, boolean[] visited) { 
 
-	private static void gtBFS(int start) { // 탐색의 출발 학생번호
-
-		Queue<Integer> q = new LinkedList<>();
-		boolean[] visited = new boolean[N + 1];
-		q.add(start);
-		visited[start] = true;
+		visited[n] = true;
 		
-		while(!q.isEmpty()) {
-			
-			int k = q.poll();
-			for (int i = 1; i <= N; i++) {
-				// 나보다 크고 방문하지 않은 친구 
-				if (adj[k][i] == 1 && !visited[i]) {
-					q.add(i);
-					visited[i] = true;
-					gtCnt++;
-				}
+		for (int i = 1; i <= N; i++) {
+			// 나보다 크고 확인하지 않은 치구
+			if(adj[n][i] == 1 && !visited[i]) {
+				gtCnt++;
+				gtDFS(i, visited);
 			}
 		}
 
 	}
 
-	private static void ltBFS(int start) { // 탐색의 출발 학생번호
+	/**
+	 * 자신보다 작은 학생을 따라 탐색
+	 * @param n 현재 기준이 되는 학생번호
+	 * @param visited 현재까지 확인한 친구 체크
+	 */
+	private static void ltDFS(int n, boolean[] visited) { 
 
-		Queue<Integer> q = new LinkedList<>();
-		boolean[] visited = new boolean[N + 1];
-		q.add(start);
-		visited[start] = true;
+		visited[n] = true;
 		
-		while(!q.isEmpty()) {
-			
-			int k = q.poll();
-			for (int i = 1; i <= N; i++) {
-				// 나보다 작고 방문하지 않은 친구 
-				if (adj[i][k] == 1 && !visited[i]) {
-					q.add(i);
-					visited[i] = true;
-					ltCnt++;
-				}
+		for (int i = 1; i <= N; i++) {
+			// 나보다 작고 확인하지 않은 친구
+			if(adj[i][n] == 1 && !visited[i]) {
+				ltCnt++;
+				ltDFS(i, visited);
 			}
 		}
 
