@@ -20,6 +20,7 @@ public class Solution5643_dfs3 {
 			M = Integer.parseInt(br.readLine()); // 관계 수 : 간선 수
 
 			adj = new int[N + 1][N + 1];
+			// idx번 학생보다 키가 큰 친구의 수와 작은 친구의 수를 각각 저장
 			gtCnt = new int[N + 1];
 			ltCnt = new int[N + 1];
 			
@@ -37,6 +38,7 @@ public class Solution5643_dfs3 {
 			for (int k = 1; k <= N; k++) {
 				dfs(k, k, new boolean[N + 1]);
 			}
+			// 자신보다 크거나 작은 친구들이 N-1 명이라면
 			for (int k = 1; k <= N; k++) {
 				if(gtCnt[k] + ltCnt[k] == N - 1) res++;
 			}

@@ -5,7 +5,7 @@ import java.util.StringTokenizer;
 
 public class Solution2115 {
 
-	static int N, M, C, res, tmpMax, map[][], container[][];
+	static int N, M, C, res, map[][], profit[][];
 	
 	public static void main(String[] args) throws IOException {
 		
@@ -19,9 +19,9 @@ public class Solution2115 {
 			N = Integer.parseInt(st.nextToken()); // N : 벌통의 크기
 			M = Integer.parseInt(st.nextToken()); // M : 채취할 수 있는 벌통의 수
 			C = Integer.parseInt(st.nextToken()); // C : 두 일꾼이 채취할 수 있는 꿀의 최대 양
-			container = new int[2][M]; // 꿀을 담을 용기
-			
+			profit = new int[N][N]; // 꿀을 담을 용기
 			map = new int[N][N];
+			
 			for (int i = 0; i < N; i++) {
 				st = new StringTokenizer(br.readLine());
 				for (int j = 0; j <N; j++) {
@@ -29,74 +29,66 @@ public class Solution2115 {
 				}
 			}
 			
-			process(0, 0, 0);
+			res = 0;
+			process();
 			
 			System.out.println("#" + tc + " " + res);
 		}
-		
-		
-
-		// 가로로 연속되도록 M개의 벌통을 선택
-			// 두 명의 일꾼이 선택한 벌통이 겹치면 안됨
-			// 벌통에서 채취한 꿀은 하나의 용기에
-			// 벌통에 있는 모든 꿀을 한번에 채취
-			// 꿀의 양을 초과할 경우 최대를 선택(조합)
-		
-		// 수익은 꿀의 양의 제곱만큼
 
 	}
 
-	private static void process(int sx, int sy, int cnt) {
+	private static void process() {
 		
-		// 두 일꿀이 벌통을 선택했다면
-		if(cnt == 2) {
-			int tmp = 0;
-			
-			tmpMax = 0;
-			getProfit(0, 0, 0, 0); // 0번 일꾼
-			tmp += tmpMax;
-			
-			tmpMax = 0;
-			getProfit(1, 0, 0, 0); // 1번 일꾼
-			tmp += tmpMax;		
-			
-			res = Math.max(res, tmp);
-			
-			return;
-		}
-		
-		if(sy >= N) return;
-		
-		for (int i = sx; i < N; i++) {
-			for (int j = sy; j < N - M + 1; j++) {
-				// 벌통에서 채취한 꿀은 하나의 용기에 담자
-				for (int k = 0; k < M; k++) {
-					container[cnt][k] = map[i][j + k];
-				}
-				
-				process(i, j + M, cnt + 1);
+		// 꿀을 채취할 수 있는 구간에서 얻을 수 있는 최대 수익
+		makeProfit();
+		// 일꾼 A가 채취할 구간
+		for (int i = 0; i < N; i++) {
+			for (int j = 0; j <= N - M; j++) {
+				combination(i, j + M, 1, profit[i][j]);
 			}
 		}
 		
 	}
 
-	private static void getProfit(int num, int idx, int sum, int profit) {
-		 
-		// 꿀의 양을 초과할 경우
-		if(sum > C) return;
-		// 담을 꿀을 모두 선택했다면
-		if(idx == M) {
-			tmpMax = Math.max(tmpMax, profit);
+	private static void combination(int x, int y, int cnt, int sum) {
+		
+		if(cnt == 2) {
+			res = Math.max(res, sum);
 			return;
 		}
-		
-		int tmp = container[num][idx]; 
-		int pf = container[num][idx] * container[num][idx];		
-		
-		getProfit(num, idx + 1, sum + tmp, profit + pf);
-		getProfit(num, idx + 1, sum, profit);
+		// 일꾼 B가 채취할 구간
+		for (int i = x; i < N; i++) {
+			for (int j = y; j <= N - M; j++) {
+				combination(i, j, cnt + 1, sum + profit[i][j]);
+			}
+			y = 0;
+		}
 	}
 
-	
+	private static void makeProfit() {
+		
+		for (int i = 0; i < N; i++) {
+			for (int j = 0; j <= N - M; j++) {
+				// 여기서 얻을 수 있는 최대 수익(부분집합)
+				profitSubset(i, j, 0, 0, 0);
+			}
+		}
+		
+	}
+
+	private static void profitSubset(int i, int j, int cnt, int sum, int totalSum) {
+		
+		if(sum > C) return;
+		if(cnt == M) {
+			// 해당 구간에서 최대 수익 갱신
+			profit[i][j - M] = Math.max(profit[i][j - M], totalSum);
+			return;
+		}
+		// 이 꿀을 채취해보자
+		profitSubset(i, j + 1, cnt + 1, sum + map[i][j], totalSum + map[i][j] * map[i][j]);
+		// 이 꿀은 채취 안하고
+		profitSubset(i, j + 1, cnt + 1, sum, totalSum);
+		
+	}
 
 }
