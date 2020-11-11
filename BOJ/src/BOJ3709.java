@@ -6,7 +6,7 @@ import java.util.StringTokenizer;
 public class BOJ3709 {
 
 	static int N, R, resR, resC;
-	static boolean map[][], isFin;
+	static boolean map[][];
 	static int[] dr = {-1, 0, 1, 0}, dc = {0, 1, 0, -1};
 
 	public static void main(String[] args) throws IOException {
@@ -16,7 +16,6 @@ public class BOJ3709 {
 
 		int T = Integer.parseInt(br.readLine());
 		for (int tc = 1; tc <= T; tc++) {
-			isFin = false;
 			resR = 0;
 			resC = 0;
 			
@@ -54,11 +53,10 @@ public class BOJ3709 {
 
 	}
 
-	private static void process(int r, int c, int d, int cnt) {
+	private static boolean process(int r, int c, int d, int cnt) {
 		
-		if(isFin) return;
 		
-		if(cnt > N * N ) return;
+		if(cnt > N * N ) return true;
 		
 		int rr = r + dr[d];
 		int cc = c + dc[d];
@@ -66,15 +64,15 @@ public class BOJ3709 {
 		if(rr < 1 || rr > N || cc < 1 || cc > N) {
 			resR = rr;
 			resC =cc;
-			isFin = true;
-			
-			return;
+			return true;
 		}
 		
 		// 거울이 없을 경우
 		if(!map[rr][cc]) process(rr, cc, d, cnt);
 		// 거울이 있을 경우 오른쪽으로 각도를 변경
 		else process(rr, cc, (d + 1) % 4, cnt + 1);
+		
+		return false;
 	}
 
 }
