@@ -7,11 +7,9 @@ import java.util.StringTokenizer;
 
 public class BOJ20005_v2 {
 
-	static int M, N, P, power[], bossHp;
+	static int M, N, P, power[];
 	static int[] dr = { -1, 0, 1, 0 }, dc = { 0, -1, 0, 1 };
 	static char map[][];
-	static boolean[][][] visited;
-	static Queue<Player> q;
 
 	public static void main(String[] args) throws IOException {
 
@@ -23,18 +21,17 @@ public class BOJ20005_v2 {
 		P = Integer.parseInt(st.nextToken()); // 플레이어 수
 		map = new char[M][N];
 		power = new int[P]; // player의 dps 정보
-		visited = new boolean[P][M][N];
 
 		// Set map
-		q = new LinkedList<>();
+		int bossR = 0, bossC = 0;
 		for (int i = 0; i < M; i++) {
 			String input = br.readLine();
 			for (int j = 0; j < N; j++) {
 				map[i][j] = input.charAt(j);
-				// player의 위치가 등록된다면
-				if (map[i][j] >= 'a' && map[i][j] <= 'z') {
-					q.add(new Player(map[i][j] - 'a', i, j));
-					visited[map[i][j] - 'a'][i][j] = true;
+				// Boss의 위치
+				if (map[i][j] == 'B') {
+					bossR = i;
+					bossC = j;
 				}
 			}
 		}
@@ -47,61 +44,64 @@ public class BOJ20005_v2 {
 			power[a - 'a'] = b;
 		}
 
-		bossHp = Integer.parseInt(br.readLine());
+		int bossHp = Integer.parseInt(br.readLine());
 
-		System.out.println(process());
+		System.out.println(process(bossR, bossC, bossHp));
 	}
 
-	private static int process() {
+	private static int process(int R, int C, int HP) {
 
-		// 전리품을 받은 플레이어
+		// 전리품을 받을 플레이어
 		boolean[] selected = new boolean[P];
+		boolean[][] visited = new boolean[M][N];
 		int cnt = 0;
+		// 보스의 출발점
+		Queue<Boss> q = new LinkedList<>();
+		q.add(new Boss(R, C));
+		visited[R][C] = true;
 
-		while (bossHp > 0) {
+		while (HP > 0) {
 
 			int size = q.size();
 			while (size-- > 0) {
 
-				Player now = q.poll();
-				// 이미 전리품 수령이 확정된 플레이어일 경우 pass
-				if (selected[now.id]) continue;
-				// 보스의 위치에 도달했을 경우
-				if (map[now.r][now.c] == 'B') {
-					selected[now.id] = true;
+				Boss now = q.poll();
+				// 플레이어의 위치에 도달했을 경우
+				if (map[now.r][now.c] >= 'a' && map[now.r][now.c] <= 'z') {
+					// 해당 플레이어를 전리품 수령 대상에 포함
+					selected[map[now.r][now.c] - 'a'] = true;
 					cnt++;
 				}
-				// 보스와 다른 위치에 있을 경우 이동
+				// 보스의 이동
 				for (int d = 0; d < 4; d++) {
 					int rr = now.r + dr[d];
 					int cc = now.c + dc[d];
 					// 범위를 벗어날 경우
 					if (rr < 0 || cc < 0 || rr >= M || cc >= N) continue;
 					// 이미 방문했거나 이동할 수 없는 경우
-					if (visited[now.id][rr][cc] || map[rr][cc] == 'X') continue;
+					if (visited[rr][cc] || map[rr][cc] == 'X') continue;
 
-					visited[now.id][rr][cc] = true;
-					q.add(new Player(now.id, rr, cc));
+					visited[rr][cc] = true;
+					q.add(new Boss(rr, cc));
 				}
 			}
 
 			// 다같이 보스 공격!
 			for (int i = 0; i < P; i++) {
-				if(selected[i]) bossHp -= power[i];
+				if (selected[i]) HP -= power[i];
 			}
 		}
-		
+
 		return cnt;
 	}
 
-	static class Player {
-		int id, r, c;
+	static class Boss {
+		int r, c;
 
-		public Player(int id, int r, int c) {
-			this.id = id;
+		public Boss(int r, int c) {
+			super();
 			this.r = r;
 			this.c = c;
 		}
-
 	}
 }
