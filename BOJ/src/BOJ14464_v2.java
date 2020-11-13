@@ -22,66 +22,59 @@ public class BOJ14464_v2 {
 			chickens[i] = Integer.parseInt(br.readLine());
 		}
 
-		PriorityQueue<Cow> pq = new PriorityQueue<>();
+		Cow[] cows = new Cow[N];
 		for (int i = 0; i < N; i++) {
 			st = new StringTokenizer(br.readLine());
 			int a = Integer.parseInt(st.nextToken());
 			int b = Integer.parseInt(st.nextToken());
-			
-			pq.add(new Cow(a, b));
+
+			cows[i] = new Cow(a, b);
 		}
-		
+
 		Arrays.sort(chickens);
-		System.out.println(process(chickens, pq));
+		Arrays.sort(cows);
+		
+		System.out.println(process(chickens, cows));
 	}
 
+	private static int process(int[] chickens, Cow[] cows) {
 
-	private static int process(int[] chickens, PriorityQueue<Cow> pq) {
+		int cnt = 0, cIdx = 0;
+		PriorityQueue<Integer> pq = new PriorityQueue<>();
 		
-		int cnt = 0;
-		
-		while(!pq.isEmpty()) {
-			
-			boolean isHelp = false;
-			for (int i = 0; i < C; i++) {
-				// 닭의 도움을 받아 소가 길을 건널 수 있다면
-				if(chickens[i] >= pq.peek().s && chickens[i] <= pq.peek().e && chickens[i] > 0) {
-					cnt++;
-					pq.poll();
-					isHelp = true;
-					chickens[i] = -1;
-					
-					break;
-				}
+		for (int i = 0; i < C; i++) {
+			// 닭이 도울 수 있는 소를 찾아보자.
+			while(cIdx < N && cows[cIdx].s <= chickens[i]) {
+				// 도울 수 있는 소의 end time을 queue에 추가
+				pq.add(cows[cIdx++].e);
 			}
-			// 소가 도움을 받을 수 없을 경우
-			if(!isHelp) pq.poll();
+			
+			// 닭이 도울 수 없는 소는 보내주자.
+			while(!pq.isEmpty() && pq.peek() < chickens[i]) {
+				pq.poll();
+			}
+			
+			// pq에 소가 남아있다면 길을 건널 수 있게 도와주자.
+			if(!pq.isEmpty()) {
+				cnt++;
+				pq.poll();
+			}
 		}
-		
+
 		return cnt;
 	}
 
-
-	static class Cow implements Comparable<Cow> {
+	static class Cow implements Comparable<Cow>{
 		int s, e;
 
 		public Cow(int s, int e) {
 			this.s = s;
 			this.e = e;
 		}
-
+		
 		@Override
 		public int compareTo(Cow o) {
-			if(this.e != o.e) return Integer.compare(this.e, o.e); 
-			else return Integer.compare(this.s, o.s);
+			return Integer.compare(this.s, o.s);
 		}
-
 	}
 }
-
-/*
-
-C * N 4억
-
-
-*/
