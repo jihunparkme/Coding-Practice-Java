@@ -1,12 +1,12 @@
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.Arrays;
 
 public class BOJ15886 {
 
-	static int N, cnt[];
+	static int N, num[];
 	static char map[];
-	static boolean[] visited;
 	
 	public static void main(String[] args) throws IOException {
 		
@@ -14,7 +14,7 @@ public class BOJ15886 {
 		
 		N = Integer.parseInt(br.readLine());
 		map = new char[N];
-		cnt = new int[N];
+		num = new int[N];
 		map = br.readLine().toCharArray();
 		
 		System.out.println(process());
@@ -22,33 +22,38 @@ public class BOJ15886 {
 
 	private static int process() {
 		
+		int id = 0;
 		for (int i = 0; i < N; i++) {
-			visited = new boolean[N];
-			go(i);
+			// 이미 길번호가 정해졌다면 pass
+			if(num[i] != 0) continue;
+			go(i, ++id);
 		}
 		
 		int res = 0;
-		int prev = cnt[0];
+		int prev = num[0];
 		for (int i = 1; i < N; i++) {
-			if(prev == cnt[i]) res++;
-			prev = cnt[i];
+			if(prev != num[i]) res++;
+			prev = num[i];
 		}
 		
-		return res;
+		return res + 1;
 	}
 
-	private static void go(int i) {
-	
-		visited[i] = true;
-		cnt[i]++;
+	private static int go(int idx, int id) {
+		// 이미 길번호가 정해진 길이면
+		if(num[idx] != 0) return num[idx];
 		
-		if(map[i] == 'E') {
-			if(visited[i + 1]) return;
-			go(i + 1);
+		num[idx] = id;
+		
+		int tmp = id;
+		if(map[idx] == 'E') {
+			tmp = go(idx + 1, id);
 		} else {
-			if(visited[i - 1]) return;
-			go(i - 1);
+			tmp = go(idx - 1, id);
 		}
+		
+		// 이미 있는 길에 포함된다면
+		return num[idx] = tmp;
 	}
 
 }
