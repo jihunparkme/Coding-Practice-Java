@@ -5,7 +5,7 @@ import java.util.LinkedList;
 import java.util.Queue;
 import java.util.StringTokenizer;
 
-public class BOJ13459 {
+public class BOJ13460 {
 
 	static int N, M;
 	static char[][] map;
@@ -64,7 +64,7 @@ public class BOJ13459 {
 					// 빨간 구슬과 파란 구슬이 동시에 구멍에 빠져도 실패
 					if(map[nBlue.r][nBlue.c] == 'O') continue;
 					// 빨간 구슬만 구멍에 빠질 경우
-					if(map[nRed.r][nRed.c] == 'O') return 1;
+					if(map[nRed.r][nRed.c] == 'O') return time;
 					
 					// 빨간 구슬과 파란 구슬이 같은 칸에 있을 경우
 					if (nRed.r == nBlue.r && nRed.c == nBlue.c) {
@@ -90,9 +90,9 @@ public class BOJ13459 {
 			}
 	
 			// 10번 이하로 성공할 수 없다면
-			if(++time > 10) return 0;
+			if(++time > 10) return -1;
 		}
-		return 0;
+		return -1;
 	}
 
 	private static Marble move(int r, int c, int dist, int d) {
