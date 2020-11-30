@@ -4,7 +4,7 @@ import java.io.InputStreamReader;
 import java.util.Arrays;
 import java.util.StringTokenizer;
 
-public class BOJ8983 {
+public class BOJ8983_v2 {
 
 	static int M, N, L, range[];
 	static Animal[] animals;
@@ -56,25 +56,19 @@ public class BOJ8983 {
 	// 이분탐색
 	private static int search(int idx) {
 		
-		int start = 0, end = M, mid = 0;
+		int start = 0, end = M - 1, mid = 0;
+		int min = animals[idx].r + animals[idx].c - L;
+		int max = animals[idx].r - animals[idx].c + L;
+		
 		while (start <= end) {
 			mid = (start + end) / 2;
-			if(mid >= M) return 0;
 			
-			int dist = getDist(animals[idx].r, animals[idx].c, range[mid]);
-			// 사정거리가 오른쪽 밖에 있을 경우
-			if (L < dist && animals[idx].r < range[mid]) end = mid - 1;
-			// 사정거리가 왼쪽 밖에 있을 경우
-			else if (L < dist && animals[idx].r >= range[mid]) start = mid + 1;
-			// 사정거리 안에 들어올 경우
-			else if (L >= dist) return 1;
+			if(min <= range[mid] && range[mid] <= max) return 1;
+			else if(range[mid] < max) start = mid + 1;
+			else end = mid - 1;
 		}
 		
 		return 0;
-	}
-
-	private static int getDist(int a, int b, int x) {
-		return Math.abs(x - a) + b;
 	}
 
 	static class Animal {
