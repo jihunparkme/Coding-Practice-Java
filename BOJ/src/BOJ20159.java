@@ -22,35 +22,31 @@ public class BOJ20159 {
 		
 		System.out.println(process());
 	}
-
+	
 	private static int process() {
 
-		// 밑장은 최대 한 번 뺄 수 있음
-		int[][] score = new int[2][N/2];
-		int first = cards[N - 1];
-		
-		score[0][0] = cards[0];
-		score[1][0] = cards[0];
-		int idx = 1;
-		for (int i = 1; i < N; i++) {
-			// 상대에게 패를 분배
-			if(i % 2 != 0) {
-				// 첫 분배에서 밑장을 뺄 경우
-				first += cards[i];	
-				
-				continue;
-			}
-			
-			// 밑장을 안 뺄 경우
-			score[0][idx] = score[0][idx - 1] + cards[i]; 
-			
-			// 밑장을 뺄 경우
-			score[1][idx] = score[0][idx - 1] + cards[N - 1];
-			
-			idx++;
+		// 홀수, 짝수의 누적합(0: 짝수, 1: 홀수)
+		int[][] sum = new int[2][N/2+1];
+		for (int i = 0; i < N; i++) {
+			// 짝수일 경우 (zero base)
+			if((i + 1) % 2 == 0) sum[0][i/2+1] = sum[0][i/2] + cards[i]; 
+			// 홀수일 경우
+			else sum[1][i/2+1] = sum[1][i/2] + cards[i]; 
 		}
 		
-		return Math.max(first - cards[N - 1], Math.max(score[0][N/2 - 1], score[1][N/2 - 1]));
+		int max = 0;
+		int[] res = new int[N + 1];
+		for (int i = 1; i <= N; i++) {
+			int idx = i / 2 + 1;
+			// 짝수일 경우
+			if(i % 2 == 0) res[i] = sum[1][idx -1] + (sum[0][N/2-1] - sum[0][idx-2]);  
+			// 홀수일 경우
+			else res[i] = sum[1][idx-1] + (sum[0][N/2-1] - sum[0][idx-1]) + cards[N - 1];
+				
+			max = Math.max(max, res[i]);
+		} 
+		
+		return max;
 	}
 
 }
