@@ -27,7 +27,7 @@ public class BOJ17143 {
 			int s = Integer.parseInt(st.nextToken()); // 속력
 			int d = Integer.parseInt(st.nextToken()); // 이동방향
 			int z = Integer.parseInt(st.nextToken()); // 크기
-			
+			// 초기 방향 설정
 			if(d == 1) d = 0;
 			else if(d == 2) d = 3;
 			else if(d == 3) d = 2;
@@ -57,12 +57,11 @@ public class BOJ17143 {
 	}
 
 	private static void move() {
-
-		// 새로운 맵에 정보를 저장
-		int[][] newMap = new int[R + 1][C + 1];
+		
+		map = new int[R + 1][C + 1];
 		
 		for (int i = 1; i <= M; i++) {
-			// 잡힌 상어는 pass
+			// 이미 잡힌 상어는 pass
 			if(sharks[i] == null) continue;
 			
 			Shark now = sharks[i];
@@ -86,43 +85,32 @@ public class BOJ17143 {
 			}
 			
 			// 이동한 칸에 다른 상어가 있을 경우
-			if(newMap[r][c] > 0) {
+			if(map[r][c] > 0) {
 				// 현재 상어보다 더 큰 상어일 경우 잡아먹힌다..
-				if(sharks[newMap[r][c]].z > now.z) sharks[i] = null;
+				if(sharks[map[r][c]].z > now.z) sharks[i] = null;
 				// 현재 상어가 더 클 경우
 				else {
 					sharks[i].r = r;
 					sharks[i].c = c;
 					// 해당 칸에 있던 상어를 잡아먹자.
-					sharks[newMap[r][c]] = null;
-					newMap[r][c] = i;
+					sharks[map[r][c]] = null;
+					map[r][c] = i;
 				}
 			}
 			// 이동한 칸이 비었을 경우
 			else {
 				sharks[i].r = r;
 				sharks[i].c = c;
-				newMap[r][c] = i;
+				map[r][c] = i;
 			}
 		}
-		
-		copy(map, newMap);
-	}
-
-	private static void copy(int[][] dest, int[][] src) {
-		
-		for (int i = 0; i <= R; i++) {
-			for (int j = 0; j <= C; j++) {
-				dest[i][j] = src[i][j];
-			}
-		}
-		
 	}
 
 	private static int fishing() {
 
-		// 낚시왕이 있는 열에 있는 상어 중에서 땅과 제일 가까운 상어를 잡자.
+		// 낚시왕이 있는 열에 있는 상어 중에서 
 		for (int i = 1; i <= R; i++) {
+			// 땅과 제일 가까운 상어를 잡자.
 			if(map[i][king] > 0) {
 				int size = sharks[map[i][king]].z; 
 				// 잡힌 상어의 정보는 삭제
