@@ -27,7 +27,7 @@ public class BOJ13335_v2 {
 	}
 
 	private static int process() {
-		
+		 
 		int time = 0, weight = 0, idx = 0;
 		// 모든 트럭이 다리를 건널 때까지
 		while(idx < n) {
