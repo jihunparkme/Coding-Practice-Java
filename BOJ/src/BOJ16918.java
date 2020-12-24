@@ -22,13 +22,9 @@ public class BOJ16918 {
 		for (int i = 0; i < R; i++) {
 			map[0][i] = br.readLine().toCharArray();
 		}
-		for (int i = 0; i < R; i++) {
-			for (int j = 0; j <C; j++) {
-				map[1][i][j] = map[0][i][j]; 
-			}
-		}
 		
 		int idx = 0;
+		// N이 1이 아닐 경우 동작
 		if(N != 1) idx = process();
 		
 		StringBuilder sb = new StringBuilder();
@@ -58,6 +54,13 @@ public class BOJ16918 {
 			}
 			if(++time == N) return idx;
 			
+//			System.out.println("============TIme" + time);
+//			for (int i = 0; i < R; i++) {
+//				for (int j = 0; j < C; j++) {
+//					System.out.print(map[idx][i][j]);
+//				}System.out.println();
+//			}
+			
 			// 전에 설치된 폭탄이 모두 폭발
 			for (int r = 0; r < R; r++) {
 				for (int c = 0; c < C; c++) {
@@ -75,6 +78,13 @@ public class BOJ16918 {
 			}
 			if(++time == N) return idx;
 			
+//			System.out.println("============TIme" + time);
+//			for (int i = 0; i < R; i++) {
+//				for (int j = 0; j < C; j++) {
+//					System.out.print(map[idx][i][j]);
+//				}System.out.println();
+//			}
+			
 			idx ^= 1;
 		}
 	}
@@ -86,7 +96,4 @@ public class BOJ16918 {
 			}
 		}
 	}
-	
-	
-
 }
