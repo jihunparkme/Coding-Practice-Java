@@ -7,12 +7,11 @@ import java.util.StringTokenizer;
 
 public class BOJ3197 {
 
-	static int R, C, cur, nxt;
+	static int R, C, idx, cur = 0 , nxt = 1;
 	static char map[][];
-	static boolean[][] visited, vsitSwan;
+	static boolean[][] visited;
 	static int[] dr = {-1, 0, 1, 0}, dc = {0, -1, 0, 1};
-	static Queue<Point>[] q;
-	static Queue<Point> qSwan;
+	static Queue<Point>[] water, swan;
 	static Point swans[];
 	
 	public static void main(String[] args) throws IOException {
@@ -20,27 +19,30 @@ public class BOJ3197 {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		StringTokenizer st = new StringTokenizer(br.readLine());
 		
-		R = Integer.parseInt(st.nextToken());
-		C = Integer.parseInt(st.nextToken());
+		R = Integer.parseInt(st.nextToken()); // 행 크기
+		C = Integer.parseInt(st.nextToken()); // 열 크기
 		map = new char[R][C];
-		swans = new Point[2];
-		
-		q = new LinkedList[2];
-		q[0] = new LinkedList<>();
-		q[1] = new LinkedList<>();
-		cur = 0; nxt = 1;
-		
-		int idx = 0;
-		// 두 마리의 백조의 위치
+		swans = new Point[2]; // 두 백조의 위치 정보
+		// 물과 빙판 위치를 저장하는 Queue
+		water = new LinkedList[2];
+		water[0] = new LinkedList<>();
+		water[1] = new LinkedList<>();
+		// 백조가 현재와 다음 날 탐색할 위치를 저장하는 Queue 
+		swan = new LinkedList[2];
+		swan[0] = new LinkedList<>();
+		swan[1] = new LinkedList<>();
+	
 		for (int i = 0; i < R; i++) {
 			map[i] = br.readLine().toCharArray();
 			for (int j = 0; j < C; j++) {
-				// 백조일 경우
+				// 두 마리의 백조 위치 저장
 				if(map[i][j] == 'L') {
 					swans[idx++] = new Point(i, j);
 					map[i][j] = '.';
-				} else if(map[i][j] == '.') {
-					q[cur].add(new Point(i, j));
+				} 
+				// 물의 위치를 저장
+				if(map[i][j] == '.') {
+					water[cur].add(new Point(i, j));
 				}
 			}
 		}
@@ -53,46 +55,49 @@ public class BOJ3197 {
 		
 		int time = 0;
 		visited = new boolean[R][C];
+		// 0번 백조가 1번 백조를 향해
+		swan[cur].add(swans[0]);
+		visited[swans[0].r][swans[0].c] = true;
 		
 		while(true) {
-			++time;
-			
+			for (int i = 0; i < R; i++) {
+				for (int j = 0; j < C; j++) {
+					System.out.print(map[i][j]);
+				}System.out.println();
+			}System.out.println();
+			// 두 마리의 백조가 만날 수 있는지 확인
+			if(isMeet()) return time;
+			// 빙하가 녹는다
 			melt();
-//			printMap();
-			
-			// 백조가 만날 수 있는지 확인
-			if(isMeet()) 
-				return time;
-			
+			// index switch
 			cur ^= 1;
 			nxt ^= 1;
+			
+			time++;
 		}
 	}
 
 	private static boolean isMeet() {
-		
-		vsitSwan = new boolean[R][C];
-		qSwan = new LinkedList<>();
-		qSwan.add(swans[0]);
-		vsitSwan[swans[0].r][swans[0].c] = true;
-		
-		for (int s = 0; s < 2; s++) {
-			while(!qSwan.isEmpty()) {
-				Point now = qSwan.poll();
-				
-				// 4방 탐색
-				for (int d = 0; d < 4; d++) {
-					int rr = now.r + dr[d];
-					int cc = now.c + dc[d];
-					// 범위를 초과할 경우
-					if(rr < 0 || cc < 0 || rr >= R || cc >= C) continue;
-					// 이미 방문했거나 빙산일 경우
-					if(vsitSwan[rr][cc] || map[rr][cc] == 'X') continue;
-					// 상대 백조를 만났을 경우
-					if(rr == swans[1].r && cc == swans[1].c) return true;
-					
-					vsitSwan[rr][cc] = true;
-					qSwan.add(new Point(rr, cc));
+		// 현재 백조가 갈 수 있는 구간을 모두 탐색
+		while(!swan[cur].isEmpty()) {
+			Point now = swan[cur].poll();
+			
+			// 4방 탐색
+			for (int d = 0; d < 4; d++) {
+				int rr = now.r + dr[d];
+				int cc = now.c + dc[d];
+				// 범위를 초과하거나 이미 방문했을 경우 pass
+				if(rr < 0 || cc < 0 || rr >= R || cc >= C || visited[rr][cc]) continue;
+				// 상대 백조를 만났을 경우 return
+				if(rr == swans[1].r && cc == swans[1].c) return true;
+				// 방문 처리
+				visited[rr][cc] = true;
+				// 빙하일 경우 다음 날 탐색을 위해 Queue에 추가
+				if(map[rr][cc] == 'X') {
+					swan[nxt].add(new Point(rr, cc));
+					map[rr][cc] = '.';
+				} else {
+					swan[cur].add(new Point(rr, cc));
 				}
 			}
 		}
@@ -102,10 +107,9 @@ public class BOJ3197 {
 
 
 	private static void melt() {
-		
-		while(!q[cur].isEmpty()) {
-			Point now = q[cur].poll();
-			visited[now.r][now.c] = true;
+		// 물이 있는 구간을 모두 탐색
+		while(!water[cur].isEmpty()) {
+			Point now = water[cur].poll();
 			
 			// 4방 탐색
 			for (int d = 0; d < 4; d++) {
@@ -113,30 +117,14 @@ public class BOJ3197 {
 				int cc = now.c + dc[d];
 				// 범위를 초과하거나 이미 방문했을 경우
 				if(rr < 0 || cc < 0 || rr >= R || cc >= C || visited[rr][cc]) continue;
-				
-				visited[rr][cc] = true;
-				
 				// 빙산일 경우
 				if(map[rr][cc] == 'X') {
 					// 물 공간과 접촉한 모든 빙판 공간이 녹는다.
 					map[rr][cc] = '.';
-					q[nxt].add(new Point(rr, cc));
-				} else { // 물일 경우
-					q[cur].add(new Point(rr, cc));
-				}
+					water[nxt].add(new Point(rr, cc));
+				} 
 			}
 		}
-		
-	}
-	
-	private static void printMap() {
-		
-		for (int i = 0; i < R; i++) {
-			for (int j = 0; j < C; j++) {
-				System.out.print(map[i][j]);
-			}System.out.println();
-		}
-		System.out.println();
 	}
 
 	static class Point {
@@ -153,5 +141,5 @@ public class BOJ3197 {
 /*
 빙산, 치즈와 유사한 문제
 
-
+처음에 매 초마다 빙산을 녹이고 백조가 상대를 찾으로 .. N^3
 */
