@@ -7,9 +7,9 @@ import java.util.StringTokenizer;
 
 public class BOJ3197 {
 
-	static int R, C, idx, cur = 0 , nxt = 1;
+	static int R, C, idx, cur = 0, nxt = 1;
 	static char map[][];
-	static boolean[][] visited;
+	static boolean[][] vstdIn, vstdOut;
 	static int[] dr = {-1, 0, 1, 0}, dc = {0, -1, 0, 1};
 	static Queue<Point>[] water, swan;
 	static Point swans[];
@@ -50,21 +50,16 @@ public class BOJ3197 {
 		System.out.println(process());
 	}
 
-	
 	private static int process() {
 		
 		int time = 0;
-		visited = new boolean[R][C];
+		vstdIn = new boolean[R][C];
+		vstdOut = new boolean[R][C];
 		// 0번 백조가 1번 백조를 향해
 		swan[cur].add(swans[0]);
-		visited[swans[0].r][swans[0].c] = true;
+		vstdIn[swans[0].r][swans[0].c] = true;
 		
 		while(true) {
-			for (int i = 0; i < R; i++) {
-				for (int j = 0; j < C; j++) {
-					System.out.print(map[i][j]);
-				}System.out.println();
-			}System.out.println();
 			// 두 마리의 백조가 만날 수 있는지 확인
 			if(isMeet()) return time;
 			// 빙하가 녹는다
@@ -87,11 +82,11 @@ public class BOJ3197 {
 				int rr = now.r + dr[d];
 				int cc = now.c + dc[d];
 				// 범위를 초과하거나 이미 방문했을 경우 pass
-				if(rr < 0 || cc < 0 || rr >= R || cc >= C || visited[rr][cc]) continue;
+				if(rr < 0 || cc < 0 || rr >= R || cc >= C || vstdIn[rr][cc]) continue;
 				// 상대 백조를 만났을 경우 return
 				if(rr == swans[1].r && cc == swans[1].c) return true;
 				// 방문 처리
-				visited[rr][cc] = true;
+				vstdIn[rr][cc] = true;
 				// 빙하일 경우 다음 날 탐색을 위해 Queue에 추가
 				if(map[rr][cc] == 'X') {
 					swan[nxt].add(new Point(rr, cc));
@@ -105,7 +100,6 @@ public class BOJ3197 {
 		return false;
 	}
 
-
 	private static void melt() {
 		// 물이 있는 구간을 모두 탐색
 		while(!water[cur].isEmpty()) {
@@ -116,7 +110,8 @@ public class BOJ3197 {
 				int rr = now.r + dr[d];
 				int cc = now.c + dc[d];
 				// 범위를 초과하거나 이미 방문했을 경우
-				if(rr < 0 || cc < 0 || rr >= R || cc >= C || visited[rr][cc]) continue;
+				if(rr < 0 || cc < 0 || rr >= R || cc >= C || vstdIn[rr][cc] || vstdOut[rr][cc]) continue;
+				vstdOut[rr][cc] = true;
 				// 빙산일 경우
 				if(map[rr][cc] == 'X') {
 					// 물 공간과 접촉한 모든 빙판 공간이 녹는다.
@@ -137,9 +132,3 @@ public class BOJ3197 {
 	}
 	
 }
-
-/*
-빙산, 치즈와 유사한 문제
-
-처음에 매 초마다 빙산을 녹이고 백조가 상대를 찾으로 .. N^3
-*/
