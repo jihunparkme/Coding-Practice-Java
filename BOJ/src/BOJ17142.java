@@ -25,9 +25,9 @@ public class BOJ17142 {
 		
 		st = new StringTokenizer(br.readLine());
 		N = Integer.parseInt(st.nextToken());	// 연구소 크기
-		M = Integer.parseInt(st.nextToken());	// 놓을 수 있는 바이러스의 개수
+		M = Integer.parseInt(st.nextToken());	// 활성 상태로 변경할 수 있는 있는 바이러스의 개수
 		map = new int[N][N];
-		virus = new Point[M];
+		virus = new Point[M]; // 선택된 활성 바이러스
 		virusZone = new ArrayList<>(); // 바이러스를 놓을 수 있는 칸
 		
 		for (int i = 0; i < N; i++) {
@@ -42,7 +42,7 @@ public class BOJ17142 {
 		}
 		
 		minTime = max;
-		cntSpace -= M; // 바이러스를 놓은 공간은 제외 
+		cntSpace -= M; // 초기 선택된 바이러스는 제외
 		process(0, 0);
 		
 		// 어떻게 놓아도 모든 빈 칸에 바이러스를 퍼뜨릴 수 없는 경우
@@ -61,7 +61,7 @@ public class BOJ17142 {
 		}
 				
 		for (int i = start; i < virusZone.size(); i++) {
-			// 이 구역에 바이러스를 설치
+			// 이 구역 바이러스를 활성 상태로
 			virus[cnt] = virusZone.get(i);
 			
 			process(cnt + 1, i + 1);
@@ -95,14 +95,16 @@ public class BOJ17142 {
 					if(rr < 0 || cc < 0 || rr >= N || cc >= N) continue;
 					// 벽이거나 이미 방문한 곳이면 pass
 					if(map[rr][cc] == 1 || visited[rr][cc]) continue;
-					// 빈 칸이면 바이러스로 감염시키고 Queue에 add
+					// 빈 칸일 경우
 					if(map[rr][cc] == 0) space = true;
+					// 빈 칸이거나 비활성 바이러스일 경우, 감염시키고 Queue에 add
 					visited[rr][cc] = true;
 					cntSpread++;
 					q.add(new Point(rr,cc));
 				}
 			}
 			
+			// 바이러스의 연쇄 확산일 경우
 			if(!space) tmp++;
 			else {
 				time += ++tmp;
