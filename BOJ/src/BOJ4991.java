@@ -2,17 +2,39 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.LinkedList;
+import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.StringTokenizer;
 
 public class BOJ4991 {
 
-	static int W, H, cntDirty, map[][];
-	static boolean visited[][][];
-	static Point start;
+	static int W, H, cntDirtyArea, map[][];
+	static Point[] coordinates;
+	static int distances[][], minCosts[];
+	static boolean visited[][], visitedNode[];
+	static PriorityQueue<Node> pq;
 	static Queue<Point> q;
-	
-	static int[] dr= {-1, 0, 1, 0}, dc = {0, 1, 0, -1};
+	static int[] dr = {0, 1, 0, -1}, dc = {-1, 0, 1, 0};
+	static class Point {
+		int r, c;
+		public Point(int r, int c) {
+			this.r = r;
+			this.c = c;
+		}
+	}
+	static class Node implements Comparable<Node> {
+		int to;
+		int weight;
+		public Node(int to, int weight) {
+			this.to = to;
+			this.weight = weight;
+		}
+		@Override
+		public int compareTo(Node o) {
+			return Integer.compare(this.weight, o.weight);
+		}
+		
+	}
 	
 	public static void main(String[] args) throws IOException {
 
@@ -27,105 +49,111 @@ public class BOJ4991 {
 			if(W == 0 && H == 0) break;
 			
 			map = new int[H][W];
-			visited = new boolean[1<<11][H][W]; // 더러운 칸의 개수는 10개를 넘지 않음
-			cntDirty = 0;
+			coordinates = new Point[11]; // 더러운 칸은 최대 10칸
+			distances = new int[11][11];
+			cntDirtyArea = 0;
 			
 			for (int i = 0; i < H; i++) {
 				char tmp[] = br.readLine().toCharArray();
+				
 				for (int j = 0; j < W; j++) {
 					map[i][j] = tmp[j];
-					// 로봇의 초기 위치
+					
 					if(map[i][j] == 'o') {
-						start = new Point(i, j, 0);
-						map[i][j] = '.';
-					}
-					// 더러운 칸에 각 번호를 부여
-					else if(map[i][j] == '*') {
-						map[i][j] = ++cntDirty;
+						coordinates[0] = new Point(i, j);
+					} else if(map[i][j] == '*') {
+						coordinates[++cntDirtyArea] = new Point(i, j);
 					}
 				}
 			}
 			
-			System.out.println(process());
+			if(calculateDistances()) {
+				System.out.println(cleaning());
+			} else {
+				System.out.println(-1);
+			}
 		}
 	}
 
-	private static int process() {
-		
-		int time = 0;
-		
-		while(cntDirty-- > 0) {
-			
-			int res = clean();
-			// 더러운 칸을 청소했다면 해당 위치에서 다시 시작
-			if(res > 0) time += res;
-			// 청소할 수 없는 더러운 칸이 있을 경우 
-			else return -1;
+	private static boolean calculateDistances() {
+		for (int i = 0; i <= cntDirtyArea; i++) {
+			for (int j = i + 1; j <= cntDirtyArea; j++) {
+				int d = dist(coordinates[i], coordinates[j]);
+				if(d == -1) {
+					return false;
+				} else {
+					distances[i][j] = distances[j][i] = d;
+				}
+			}
 		}
-		
-		return time;
+		return true;
 	}
 
-	private static int clean() {
+	private static int dist(Point start, Point end) {
 		
-		int time = 0;
 		q = new LinkedList<>();
+		visited= new boolean[H][W];
 		q.add(start);
-		visited[start.key][start.r][start.c] = true;
+		visited[start.r][start.c] = true;
 		
+		int result = 0;
 		while(!q.isEmpty()) {
-			
 			int size = q.size();
-			time++;
+			++result;
 			
 			while(size-- > 0) {
-				
 				Point now = q.poll();
 				for (int d = 0; d < 4; d++) {
 					int rr = now.r + dr[d];
 					int cc = now.c + dc[d];
-					// 범위 초과
-					if(rr < 0 || cc < 0 || rr >= H || cc >= W) continue;
-					// 이미 방문한 칸이거나 가구가 있을 경우
-					if(visited[now.key][rr][cc] || map[rr][cc] == 'x') continue;
-					
-					// 더러운 칸을 발견했을 경우
-					if(map[rr][cc] > 0 && map[rr][cc] <= 10) {
-						// 청소 후 새로운 시작 위치를 설정
-						int newKey = now.key | (1 << map[rr][cc]);
-						visited[newKey][rr][cc] = true;
-						start = new Point(rr, cc, newKey);
-						map[rr][cc] = '.';
-						
-						return time;
-					} 
-					// 빈칸일 경우
-					else {
-						visited[now.key][rr][cc] = true;
-						q.add(new Point(rr, cc, now.key));
-					}
+					if(rr < 0 || cc < 0 || rr >= H || cc >= W || 
+							visited[rr][cc] || map[rr][cc] == 'x') continue;
+					if(rr == end.r && cc == end.c) return result;
+					visited[rr][cc] = true;
+					q.add(new Point(rr, cc));
+				}
+			}
+		}
+		return -1;
+	}
+
+	private static int cleaning() {
+		
+		pq = new PriorityQueue<Node>();
+		visitedNode = new boolean[11];
+		minCosts = new int[11];
+		for (int i = 0; i <= cntDirtyArea; i++) {
+			minCosts[i] = Integer.MAX_VALUE;
+		}
+		
+		int result = 0, cntNode = 0;
+		minCosts[0] = 0;
+		pq.add(new Node(0, 0));
+		
+		while(!pq.isEmpty()) {
+			Node now = pq.poll();
+			if(visitedNode[now.to]) continue;
+			
+			result += now.weight;
+			System.out.println(now.to + " ::: " + now.weight);
+			visitedNode[now.to]  = true;
+			if(++cntNode == cntDirtyArea + 1) return result;
+			
+			for (int i = 0; i <= cntDirtyArea; i++) {
+				if(!visitedNode[i] && distances[now.to][i] != 0 && distances[now.to][i] < minCosts[i]) {
+					minCosts[i] = distances[now.to][i];
+					pq.add(new Node(i, minCosts[i]));
 				}
 			}
 		}
 		
-		// 청소할 수 없는 더러운 칸이 존재 
+		// 청소할 수 없는 더러운 칸이 존재
 		return -1;
 	}
-
-	static class Point {
-		int r, c, key;
-
-		public Point(int r, int c, int key) {
-			this.r = r;
-			this.c = c;
-			this.key = key;
-		}
-	}
-	
 }
 
 
 /*
 1. 각 칸(초기 로봇 위치 + 더러운 칸)간의 거리 구하기 O(10^2)
-2. MST 알고리즘 적용
+2. 순열
 */
