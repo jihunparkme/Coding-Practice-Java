@@ -2,17 +2,15 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.LinkedList;
-import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.StringTokenizer;
 
 public class BOJ4991 {
 
-	static int W, H, cntDirtyArea, map[][];
+	static int W, H, cntDirtyArea, map[][], answer;
 	static Point[] coordinates;
-	static int distances[][], minCosts[];
-	static boolean visited[][], visitedNode[];
-	static PriorityQueue<Node> pq;
+	static int distances[][];
+	static boolean visited[][], isSelect[];
 	static Queue<Point> q;
 	static int[] dr = {0, 1, 0, -1}, dc = {-1, 0, 1, 0};
 	static class Point {
@@ -21,19 +19,6 @@ public class BOJ4991 {
 			this.r = r;
 			this.c = c;
 		}
-	}
-	static class Node implements Comparable<Node> {
-		int to;
-		int weight;
-		public Node(int to, int weight) {
-			this.to = to;
-			this.weight = weight;
-		}
-		@Override
-		public int compareTo(Node o) {
-			return Integer.compare(this.weight, o.weight);
-		}
-		
 	}
 	
 	public static void main(String[] args) throws IOException {
@@ -51,7 +36,8 @@ public class BOJ4991 {
 			map = new int[H][W];
 			coordinates = new Point[11]; // 더러운 칸은 최대 10칸
 			distances = new int[11][11];
-			cntDirtyArea = 0;
+			cntDirtyArea = 1;
+			answer = Integer.MAX_VALUE;
 			
 			for (int i = 0; i < H; i++) {
 				char tmp[] = br.readLine().toCharArray();
@@ -62,13 +48,15 @@ public class BOJ4991 {
 					if(map[i][j] == 'o') {
 						coordinates[0] = new Point(i, j);
 					} else if(map[i][j] == '*') {
-						coordinates[++cntDirtyArea] = new Point(i, j);
+						coordinates[cntDirtyArea++] = new Point(i, j);
 					}
 				}
 			}
 			
+			isSelect = new boolean[cntDirtyArea];
 			if(calculateDistances()) {
-				System.out.println(cleaning());
+				cleaning(0, 0, 0);
+				System.out.println(answer);
 			} else {
 				System.out.println(-1);
 			}
@@ -76,8 +64,8 @@ public class BOJ4991 {
 	}
 
 	private static boolean calculateDistances() {
-		for (int i = 0; i <= cntDirtyArea; i++) {
-			for (int j = i + 1; j <= cntDirtyArea; j++) {
+		for (int i = 0; i < cntDirtyArea; i++) {
+			for (int j = i + 1; j < cntDirtyArea; j++) {
 				int d = dist(coordinates[i], coordinates[j]);
 				if(d == -1) {
 					return false;
@@ -117,38 +105,19 @@ public class BOJ4991 {
 		return -1;
 	}
 
-	private static int cleaning() {
-		
-		pq = new PriorityQueue<Node>();
-		visitedNode = new boolean[11];
-		minCosts = new int[11];
-		for (int i = 0; i <= cntDirtyArea; i++) {
-			minCosts[i] = Integer.MAX_VALUE;
+	private static void cleaning(int now, int cnt, int sum) {
+		if(cnt == cntDirtyArea - 1) {
+			answer = Math.min(answer, sum);
+			return;
 		}
 		
-		int result = 0, cntNode = 0;
-		minCosts[0] = 0;
-		pq.add(new Node(0, 0));
-		
-		while(!pq.isEmpty()) {
-			Node now = pq.poll();
-			if(visitedNode[now.to]) continue;
+		for (int i = 1; i < cntDirtyArea; i++) {
+			if(isSelect[i]) continue;
 			
-			result += now.weight;
-			System.out.println(now.to + " ::: " + now.weight);
-			visitedNode[now.to]  = true;
-			if(++cntNode == cntDirtyArea + 1) return result;
-			
-			for (int i = 0; i <= cntDirtyArea; i++) {
-				if(!visitedNode[i] && distances[now.to][i] != 0 && distances[now.to][i] < minCosts[i]) {
-					minCosts[i] = distances[now.to][i];
-					pq.add(new Node(i, minCosts[i]));
-				}
-			}
+			isSelect[i] = true;
+			cleaning(i, cnt + 1, sum + distances[now][i]);
+			isSelect[i] = false;
 		}
-		
-		// 청소할 수 없는 더러운 칸이 존재
-		return -1;
 	}
 }
 
