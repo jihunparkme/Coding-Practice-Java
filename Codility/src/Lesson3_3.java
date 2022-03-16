@@ -17,8 +17,7 @@ class Lesson3_3 {
     public static int solution(int[] A) {
 
         int N = A.length;
-        int total = 0;
-        total = getTotal(A);
+        int total = getTotal(A);
 
         int tape1 = A[0];
         int tape2 = total - tape1;
@@ -43,6 +42,3 @@ class Lesson3_3 {
         return result;
     }
 }
-
-
-
