@@ -16,10 +16,6 @@ public class Progrms_92335 {
      * 예를 들어, 101은 P가 될 수 없습니다.
      */
     public static int solution(int n, int k) {
-        String s = Integer.toString(n, k);
-        System.out.println(s);
-
-
         int answer = 0;
 
         Stack<Integer> mods = getMods(k, n);
