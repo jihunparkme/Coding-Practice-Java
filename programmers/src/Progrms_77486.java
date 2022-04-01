@@ -36,17 +36,18 @@ public class Progrms_77486 {
 
         //2. 부모 노드에 계속 이득의 10% 씩 올리기
         for (int i = 0; i < seller.length; i++) {
-            int cost = amount[i] * PRICE;
-            int tax = giveTax(seller[i], cost, revenue);
 
-            if (!"-".equals(parents.get(seller[i]))) {
-                String now = parents.get(seller[i]);
-                while(!"-".equals(now)) {
-                    giveTax(now, tax, revenue);
-                    tax = (int) (tax * 0.1);
-                    now = parents.get(now);
-                    if (tax < 1) break;
-                }
+            int cost = amount[i] * PRICE;
+            String now = seller[i];
+
+            while(!"-".equals(now)) {
+                int tax = (int) (cost * 0.1);
+                revenue.put(now, revenue.getOrDefault(now, 0) + cost - tax);
+
+                cost = tax;
+                now = parents.get(now);
+
+                if (tax < 1) break;
             }
         }
 
@@ -56,12 +57,5 @@ public class Progrms_77486 {
         }
 
         return answer;
-    }
-
-    private static int giveTax(String seller, int cost, Map<String, Integer> revenue) {
-        int tax = (int) (cost * 0.1);
-        revenue.put(seller, revenue.getOrDefault(seller, 0) + cost - tax);
-
-        return tax;
     }
 }
