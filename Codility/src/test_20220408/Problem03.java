@@ -3,6 +3,7 @@ package test_20220408;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 public class Problem03 {
 
@@ -33,6 +34,9 @@ public class Problem03 {
         if (visits == null) return result;
 
         for (Map<String, UserStats> visit : visits) {
+
+            if (visit == null) return result;
+
             for (String key : visit.keySet()) {
 
                 long id;
