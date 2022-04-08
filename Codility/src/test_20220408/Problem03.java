@@ -1,15 +1,16 @@
 package test_20220408;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 
 public class Problem03 {
 
     public static void main(String[] args) {
         Map<String, UserStats> map = new HashMap<>();
         map.put("123", new UserStats(Optional.of(3L)));
+        map.put("1", new UserStats(Optional.of(25L)));
         Map<Long, Long> count = count(map);
         for (Long key : count.keySet()) {
             System.out.println(key + " " + count.get(key));
@@ -29,33 +30,39 @@ public class Problem03 {
      */
     static Map<Long, Long> count(Map<String, UserStats>... visits) {
 
-        Map<Long, Long> result = new HashMap<>();
+        Map<Long, Long> result = new LinkedHashMap<>();
 
         if (visits == null) return result;
 
         for (Map<String, UserStats> visit : visits) {
 
-            if (visit == null) return result;
+            if (visit == null) continue;
 
             for (String key : visit.keySet()) {
 
-                long id;
-                try {
-                    id = Long.parseLong(key);
-                } catch (Exception e) {
-                    continue;
+                if (checkValid(visit, key)) {
+                    result.put(Long.parseLong(key), visit.get(key).getVisitCount().get());
                 }
-
-                UserStats userStats = visit.get(key);
-                if (userStats == null) continue;
-
-                Optional<Long> visitCount = userStats.getVisitCount();
-                if (!visitCount.isPresent()) continue;
-
-                result.put(id, visitCount.get());
             }
         }
 
         return result;
+    }
+
+    private static boolean checkValid(Map<String, UserStats> visit, String key) {
+
+        try {
+            long id = Long.parseLong(key);
+        } catch (NumberFormatException e) {
+            return false;
+        }
+
+        UserStats userStats = visit.get(key);
+        if (userStats == null) return false;
+
+        Optional<Long> visitCount = userStats.getVisitCount();
+        if (!visitCount.isPresent()) return false;
+
+        return true;
     }
 }
