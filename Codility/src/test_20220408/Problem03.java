@@ -8,9 +8,19 @@ import java.util.Optional;
 public class Problem03 {
 
     public static void main(String[] args) {
+        Map<String, UserStats>[] mapArr = new HashMap[10];
+
         Map<String, UserStats> map = new HashMap<>();
         map.put("123", new UserStats(Optional.of(3L)));
         map.put("1", new UserStats(Optional.of(25L)));
+
+        Map<String, UserStats> map2 = new HashMap<>();
+        map.put("121233", new UserStats(Optional.of(142L)));
+        map.put("11231", new UserStats(Optional.of(1243L)));
+
+        mapArr[0] = map;
+        mapArr[1] = map2;
+
         Map<Long, Long> count = count(map);
         for (Long key : count.keySet()) {
             System.out.println(key + " " + count.get(key));
@@ -19,14 +29,7 @@ public class Problem03 {
 
     /**
      * 사용자 방문 수를 나타내는 집계
-     * count 메스드가 이미 있음
-     * 반환 Map<Long, Long> id, 방문 횟
-     *
-     *
-     * String key 를 Long 으로 파싱. 불가능할 경우 패스
-     * 몇몇 key 의 UserState 가 null 일 경우 패스
-     * UserState는 visitCount 필드를 갖는데 Optional<Long> 타입. getter 있음. optional empty 면 패스
-     *
+     * Map<Long, Long> id, 방문 횟수
      */
     static Map<Long, Long> count(Map<String, UserStats>... visits) {
 
@@ -41,7 +44,8 @@ public class Problem03 {
             for (String key : visit.keySet()) {
 
                 if (checkValid(visit, key)) {
-                    result.put(Long.parseLong(key), visit.get(key).getVisitCount().get());
+                    Long existCnt = result.getOrDefault(Long.parseLong(key), 0L);
+                    result.put(Long.parseLong(key), existCnt + visit.get(key).getVisitCount().get());
                 }
             }
         }
