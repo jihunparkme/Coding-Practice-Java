@@ -33,6 +33,9 @@ public class Problem03 {
         System.out.println(solution(new int[]{1,2,3,1_000_000_000}, 300_000) == false);
         System.out.println(solution(new int[]{1,2,3,1_000_000_000}, 1_000_000_000) == false);
         System.out.println(solution(new int[]{1,2,3,6}, 6) == false);
+        System.out.println(solution(new int[]{1,3,4,5,6}, 3) == false);
+        System.out.println(solution(new int[]{1,3,4,5}, 5) == false);
+        System.out.println(solution(new int[]{1,2,3,4,5}, 4) == true);
     }
 
     /**
