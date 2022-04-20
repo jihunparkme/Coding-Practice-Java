@@ -12,10 +12,25 @@ public class Lesson10_4 {
     }
 
     /**
+     * [Redefine the problem + abstract]
      * 블록으로 나누기 (같은 개수의 요소를 포함하고, 적어도 하나의 peak 포함)
      * 배열 A를 나눌 수 있는 최대 블록 수
      * 블록으로 나눌 수 없을 경우 0
      *
+     * [Create solution plan]
+     * 1.
+     * 각 블록에 적어도 하나의 peak를 포함하고, 같은 개수의 요소를 갖으려면 peak의 개수와 N의 약수를 먼저 떠올려야 한다.
+     * 블록이 아무리 많더라도 peak의 개수를 초과한다면 조건에 맞지 않으므로 볼 필요도 없다.
+     *
+     * 2.
+     * peak의 개수만큼 확인 블록을 나누어보는데, peak가 N의 약수일 경우만 확인하면 된다.
+     * (N의 약수가 아니면 블록의 각 요소 개수가 다르다)
+     *
+     * 3.
+     * 각 블록 구간과 peak_idx를 확인하면서 각 블록에 peak가 포함되어 있는지를 확인하자.
+     * (left, right idx 를 활용해서 블록 구간을 잡고 각 peak idx 를 확인)
+     *
+     * [Prove the plan]
      * N is an integer within the range [1..100,000];
      * each element of array A is an integer within the range [0..1,000,000,000].
      *
