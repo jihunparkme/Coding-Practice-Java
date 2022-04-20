@@ -1,12 +1,18 @@
 class template {
+
     public static void main(String[] args) {
-        solution(3);
+        System.out.println(solution(3) == 0);
     }
 
-    private static void solution(int i) {
-        System.out.println(i);
+    /**
+     * [Redefine the problem + abstract]
+     *
+     * [Create solution plan]
+     *
+     * [Prove the plan]
+     *
+     */
+    public static int solution(int A) {
+        return 0;
     }
 }
-
-
-
